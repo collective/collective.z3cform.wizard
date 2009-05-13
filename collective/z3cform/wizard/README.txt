@@ -5,6 +5,14 @@ This library implements a simple z3c.form-based wizard.  The wizard is composed
 of multiple steps.  Each step is a form.  Data is stored in a session until
 the user clicks the Finish button on the last step.
 
+In order to make good use of this library you'll need to be reasonably familiar
+with z3c.form first.  Here are some places to start:
+
+ * Official documentation: http://docs.zope.org/z3c.form
+ 
+ * Slides from Stephan Richter's tutorial at Plone Conference 2008: http://svn.zope.org/*checkout*/z3c.talk/trunk/Z3CForms/Z3CForms.html?rev=92118
+ 
+
 Wizard Step
 -----------
 
