@@ -10,7 +10,7 @@ with z3c.form first.  Here are some places to start:
 
  * Official documentation: http://docs.zope.org/z3c.form
  
- * Slides from Stephan Richter's tutorial at Plone Conference 2008: http://svn.zope.org/*checkout*/z3c.talk/trunk/Z3CForms/Z3CForms.html?rev=92118
+ * Slides from Stephan Richter's tutorial at Plone Conference 2008: http://svn.zope.org/\*checkout\*/z3c.talk/trunk/Z3CForms/Z3CForms.html?rev=92118
  
 
 Wizard Step
