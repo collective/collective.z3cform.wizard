@@ -1,0 +1,24 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="collective.z3cform.wizard"
+      tal:omit-tag="">
+  
+<tal:widgets repeat="widget view/widgets/values">
+  <div class="row"
+       tal:define="hidden python:widget.mode == 'hidden'"
+       tal:omit-tag="hidden">
+
+    <metal:field use-macro="context/@@ploneform-macros/field" />
+    
+  </div>
+</tal:widgets>
+
+<metal:use use-macro="context/@@ploneform-macros/actions" />
+
+<div tal:repeat="form view/subforms"
+     tal:content="structure form/render">
+</div>
+
+</html>

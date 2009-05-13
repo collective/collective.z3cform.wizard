@@ -1,0 +1,181 @@
+Example and tests
+=================
+
+Define a wizard with three steps
+--------------------------------
+
+To define a form that uses the wizard, we'll need to define steps.
+These steps represent individual forms that are processed
+sequentially.  Only when the last step is completed will the data be
+submitted through a user-defined method.
+
+  >>> from zope import schema
+  >>> from z3c.form import field, form
+  >>> from collective.z3cform.wizard import wizard
+
+  >>> class StepOne(wizard.Step):
+  ...     prefix = 'one'
+  ...     fields = field.Fields(
+  ...         schema.Int(__name__='age', title=u"Age"))
+
+By default, the steps will get/set values in the session.  If we want to
+initialize these values or do something with them once the wizard is completed,
+we need to implement the load and apply methods for our step.
+
+  >>> from pprint import pprint
+  >>> class StepTwo(wizard.Step):
+  ...     prefix = 'two'
+  ...     fields = field.Fields(
+  ...         schema.TextLine(__name__='name', title=u"Name", required=True))
+  ...         
+  ...     def load(self, context):
+  ...         data = self.getContent()
+  ...         data['name'] = 'David'
+  ...         
+  ...     def apply(self, context):
+  ...         data = self.getContent()
+  ...         pprint('Name from step 2: %s' % data['name'])
+
+  >>> class StepThree(wizard.Step):
+  ...     prefix = 'three'
+  ...     fields = field.Fields(
+  ...         schema.TextLine(__name__='color', title=u'Favorite Color', required=False))
+
+We can now define our minimal wizard:
+
+  >>> class Wizard(wizard.Wizard):
+  ...     label = u"My silly wizard"
+  ...     steps = StepOne, StepTwo, StepThree
+
+Render the form
+---------------
+
+Let's render the form for the first time now:
+
+  >>> request = TestRequest()
+  >>> wizard = Wizard(None, request)
+  >>> print wizard()
+  <style...
+  <div class="form">
+    <form action="http://127.0.0.1" method="post">
+        <p class="discreet"></p>
+    <div class="row">
+        <div class="field">
+          <label for="one-widgets-age">
+            <span>Age</span>
+          </label>...
+          <span class="fieldRequired" title="Required">
+                (Required)
+          </span>
+          <div class="widget">
+            <input type="text" id="one-widgets-age"
+                   name="one.widgets.age"
+                   class="text-widget required int-field" value="" />
+          </div>
+        </div>
+    </div>
+    <hr />
+    <div class="wizard-buttons">
+        <div class="action">
+            <input type="submit" id="form-buttons-continue"
+                 name="form.buttons.continue"
+                 class="submit-widget button-field" value="Continue" />
+        </div>
+    </div>
+    </form>
+  </div>
+
+
+Submit with an error
+--------------------
+
+Remember that our first step requires the age.
+
+  >>> request.form = {
+  ...     'form.buttons.continue': u'Continue',
+  ... }
+  >>> wizard = Wizard(None, request)
+  >>> print wizard()
+  <...
+  <div class="form">
+  ...There were errors...
+  ...Required input is missing...
+
+Submit the first step successfully
+----------------------------------
+
+  >>> request.form['one.widgets.age'] = u'27'
+  >>> wizard = Wizard(None, request)
+  >>> print wizard()
+  <...
+  <div class="form">
+    <form action="http://127.0.0.1" method="post">
+        <p class="discreet"></p>
+    <div class="row">
+        <div class="field">
+          <label for="two-widgets-name">
+            <span>Name</span>
+          </label>
+          <span class="fieldRequired"
+                title="Required">
+            (Required)
+          </span>
+          <div class="widget">
+            <input type="text" id="two-widgets-name"
+                   name="two.widgets.name"
+                   class="text-widget required textline-field" value="David" />
+          </div>  
+        </div>
+    </div>
+      <hr />
+      <div class="wizard-buttons">
+          <div class="action">
+            <input type="submit" id="form-buttons-back"
+                   name="form.buttons.back"
+                   class="submit-widget button-field" value="Back" />
+          </div>
+          <div class="action">
+            <input type="submit" id="form-buttons-continue"
+                   name="form.buttons.continue"
+                   class="submit-widget button-field" value="Continue" />
+          </div>
+      </div>
+    </form>
+  </div>
+
+Submitting step two
+-------------------
+
+Step two works similarly:
+
+  >>> request.form['two.widgets.name'] = u'David'
+  >>> wizard = Wizard(None, request)
+  >>> html = wizard()
+  >>> 'three' in html, 'Finish' in html
+  (True, True)
+
+Step three: Slaying the dragon
+------------------------------
+
+Now let's press the Finish button.  We expect this to print out the value
+from step 2, thanks to the 'apply' method we implemented for that step.
+
+Remembering that in our wizard, we implemented ``finish`` to print out
+the data that it receives.  Here's the finishing move:
+
+  >>> request.form['form.buttons.finish'] = u'Finish'
+  >>> wizard = Wizard(None, request)
+  >>> html = wizard()
+  'Name from step 2: David'
+
+  >>> print html
+  <...
+  <div class="form">
+    <div class="portalMessage">Information submitted successfully.</div>
+  </div>...
+
+
+Real-world example
+------------------
+
+See the collective.megaphone package for a real-world use of this library.
