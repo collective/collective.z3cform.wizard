@@ -212,7 +212,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
     @button.buttonAndHandler(u'Finish',
                              name='finish',
                              condition=lambda form:form.onLastStep)
-    def handle_finish(self, action):
+    def handleFinish(self, action):
         data, errors = self.currentStep.extractData()
         if errors:
             self.status = self.formErrorsMessage
