@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.0rc1 (unreleased)
+-------------------
+
+* Reset the wizard session if you leave it before finishing.
+  [davisagli]
+
 1.0b1 (2009-05-12)
 ------------------
 
