@@ -175,7 +175,7 @@ the data that it receives.  Here's the finishing move:
   </div>...
 
 
-Real-world example
-------------------
+Example
+-------
 
-See the collective.megaphone package for a real-world use of this library.
+See the collective.megaphone package for an example of this library in use.
