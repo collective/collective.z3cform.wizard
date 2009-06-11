@@ -44,8 +44,17 @@ class IWizard(IForm):
         Boolean.  True if the last step of the wizard is being displayed.
         """)
     
+    allStepsFinished = Attribute("""
+        Boolean.  True if the 'available' attribute of each wizard step is True.
+        """)
+    
     finished = Attribute("""
-        Boolean.  True if the wizard has been completed.
+        Boolean.  True if the wizard has been completed and the final actions
+        have run.
+        """)
+    
+    absolute_url = Attribute("""
+        The URL of the wizard.
         """)
 
     def initialize():
@@ -108,9 +117,18 @@ class IStep(IForm):
     
     wizard = Attribute('The wizard this step is being used in.')
     
+    available = Attribute("""
+        Boolean indicating whether the current step can be accessed via the
+        wizard navigation links.  By default, only steps for which there is
+        already data stored in the session can be accessed. (The next and
+        previous steps can always be accessed via the respective buttons
+        regardless of the value of this property.)
+        """)
+
     completed = Attribute("""
         Boolean indicating whether the user should be allowed to move on to the
-        next step.  Defaults to True.
+        next step.  Defaults to True.  If false, the Continue button will be
+        disabled.
         """)
 
     def applyChanges(data):

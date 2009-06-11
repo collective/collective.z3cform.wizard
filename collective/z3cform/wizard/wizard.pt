@@ -2,11 +2,34 @@
 .wizard-buttons {
     text-align: right;
 }
+ul.wizard-steps {
+    text-align: center;
+}
+ul.wizard-steps li {
+    display: inline;
+    margin-right: 1em;
+}
+.wizard-step-link.selected {
+    font-weight: bold;
+    font-size: 120%;
+}
 .fieldErrorBox .error {
     border: none;
     padding: 0;
 }
 </style>
+
+<ul class="wizard-steps">
+    <li tal:repeat="step view/activeSteps"
+        class="wizard-step-link"
+        tal:attributes="class python:'wizard-step-link' + ((step is view.currentStep) and ' selected' or '')">
+        <a tal:omit-tag="python:not step.available or step is view.currentStep"
+           tal:content="string:${repeat/step/number}. ${step/label}"
+           tal:attributes="href string:${view/absolute_url}?step:int=${repeat/step/index}">
+            Link to step
+        </a>
+    </li>
+</ul>
 
 <div class="form" tal:condition="view/finished">
   <div class="portalMessage"

@@ -1,11 +1,33 @@
 Changelog
 =========
 
-1.0rc1 (unreleased)
--------------------
+1.0b2 (unreleased)
+------------------
+
+* Adjusted the criteria for visibility of the Finish button so that it shows up
+  on any step as long as data is stored in the session for all steps.
+  Previously it was only shown on the final step.
+
+* Added wizard navigation which lists the wizard's steps and links to ones
+  that are available.
+
+* Added support in the Wizard class for jumping to a particular step based
+  on an index passed in the request (but only if that step is available).
+
+* Adjusted the URL check that triggers session invalidation to not pay
+  attention to the query string or fragment.
+
+* Changed the updateCurrentStep method of the Wizard class (not part of the
+  public API) to take a single parameter, the target step index.
+
+* Added 'allStepsFinished' property to the Wizard class.
+
+* Added 'available' property to the Step class.
+
+* Added 'absolute_url' property to the Wizard class.
 
 * Reset the wizard session if you leave it before finishing.
-  [davisagli]
+
 
 1.0b1 (2009-05-12)
 ------------------

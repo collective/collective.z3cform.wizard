@@ -68,6 +68,12 @@ class Step(utils.OverridableTemplate, form.Form):
     
     wizard = None
     completed = True
+    
+    @property
+    def available(self):
+        if self.prefix in self.request.SESSION[self.wizard.sessionKey]:
+            return True
+        return False
 
     def __init__(self, context, request, wizard):
         super(Step, self).__init__(context, request)
@@ -125,8 +131,9 @@ class Wizard(utils.OverridableTemplate, form.Form):
         sessionKey = self.sessionKey
         if not self.request.SESSION.has_key(sessionKey):
             self.request.SESSION[sessionKey] = {}
-        if self.request['HTTP_REFERER'].startswith('http') and self.request['ACTUAL_URL'] != self.request['HTTP_REFERER']:
-            self.request.SESSION[sessionKey] = {}
+        if self.request['HTTP_REFERER'].startswith('http'):
+            if not utils.location_is_equal(self.request['ACTUAL_URL'], self.request['HTTP_REFERER']):
+                self.request.SESSION[sessionKey] = {}
         self.session = self.request.SESSION[sessionKey]
 
         # initialize steps
@@ -141,9 +148,9 @@ class Wizard(utils.OverridableTemplate, form.Form):
             self.initialize()
             self.sync()
 
-        self.currentStep = None
-        self.currentIndex = self.session.setdefault('step', 0)
-        self.updateCurrentStep()
+        self.updateCurrentStep(self.session.setdefault('step', 0))
+        if 'step' in self.request.form:
+            self.jump(self.request.form['step'])
 
         self.updateActions()
         self.actions.execute()
@@ -159,7 +166,10 @@ class Wizard(utils.OverridableTemplate, form.Form):
             else:
                 self.actions['continue'].disabled = 'disabled'
 
-    def updateCurrentStep(self):
+    def updateCurrentStep(self, index):
+        self.currentIndex = index
+        self.session['step'] = self.currentIndex
+        self.sync()
         self.currentStep = self.activeSteps[self.currentIndex]
         self.currentStep.update()
 
@@ -176,11 +186,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
             self.status = self.formErrorsMessage
         else:
             self.currentStep.applyChanges(data)
-            
-            self.currentIndex = currentIndex = self.currentIndex - 1
-            self.session['step'] = currentIndex
-            self.sync()
-            self.updateCurrentStep()
+            self.updateCurrentStep(self.currentIndex - 1)
             
             # Back can change the conditions for the finish button,
             # so we need to reconstruct the button actions, since we
@@ -200,20 +206,23 @@ class Wizard(utils.OverridableTemplate, form.Form):
             self.status = self.formErrorsMessage
         else:
             self.currentStep.applyChanges(data)
-            
-            self.currentIndex = currentIndex = self.currentIndex + 1
-            self.session['step'] = currentIndex
-            self.sync()
-            self.updateCurrentStep()
+            self.updateCurrentStep(self.currentIndex + 1)
 
             # Proceed can change the conditions for the finish button,
             # so we need to reconstruct the button actions, since we
             # do not redirect.
             self.updateActions()
 
+    @property
+    def allStepsFinished(self):
+        for step in self.activeSteps:
+            if not step.available:
+                return False
+        return True
+
     @button.buttonAndHandler(u'Finish',
                              name='finish',
-                             condition=lambda form:form.onLastStep)
+                             condition=lambda form:form.allStepsFinished or form.onLastStep)
     def handleFinish(self, action):
         data, errors = self.currentStep.extractData()
         if errors:
@@ -227,6 +236,18 @@ class Wizard(utils.OverridableTemplate, form.Form):
         # clear out the session
         self.request.SESSION[self.sessionKey] = {}
         self.sync()
+
+    def jump(self, step_idx):
+        # make sure target is available
+        try:
+            target_step = self.activeSteps[step_idx]
+        except (KeyError, TypeError):
+            return
+        if not target_step.available:
+            return
+
+        self.updateCurrentStep(step_idx)
+        self.updateActions()
 
     def initialize(self):
         self.loadSteps(self.context)
@@ -246,3 +267,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     def sync(self):
         self.request.SESSION._p_changed = True
+
+    @property
+    def absolute_url(self):
+        return self.context.absolute_url() + '/' + self.__name__

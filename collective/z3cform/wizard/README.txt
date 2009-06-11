@@ -26,10 +26,17 @@ Additional attributes:
   wizard
     The wizard this step is being used in.
 
+  available
+    Boolean indicating whether the current step can be accessed via the
+    wizard navigation links.  By default, only steps for which there is already
+    data stored in the session can be accessed. (The next and previous steps
+    can always be accessed via the respective buttons regardless of the value
+    of this property.)
+
   completed
     Boolean indicating whether the user should be allowed to move on to the
-    next step.  Defaults to True.  Override this with a property if you need
-    custom logic.
+    next step.  Defaults to True.  If False, the Continue button will be
+    disabled.
 
 Additional methods:
 
@@ -81,8 +88,14 @@ Attributes set during the update method:
   onLastStep
     Boolean.  True if the last step of the wizard is being displayed.
 
+  allStepsFinished
+    Boolean.  True if the 'available' attribute of each wizard step is True.
+
   finished
     Boolean.  True if the wizard has been completed.
+
+  absolute_url
+    The URL of the wizard.
 
 Methods:
 
