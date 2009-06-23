@@ -4,6 +4,9 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+* Moved the default wizard CSS to a browser resource which is available but
+  not pulled in by anything by default.
+
 * Adjusted the criteria for visibility of the Finish button so that it shows up
   on any step as long as data is stored in the session for all steps.
   Previously it was only shown on the final step.

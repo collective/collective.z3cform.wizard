@@ -1,24 +1,3 @@
-<style type="text/css">
-.wizard-buttons {
-    text-align: right;
-}
-ul.wizard-steps {
-    text-align: center;
-}
-ul.wizard-steps li {
-    display: inline;
-    margin-right: 1em;
-}
-.wizard-step-link.selected {
-    font-weight: bold;
-    font-size: 120%;
-}
-.fieldErrorBox .error {
-    border: none;
-    padding: 0;
-}
-</style>
-
 <ul class="wizard-steps">
     <li tal:repeat="step view/activeSteps"
         class="wizard-step-link"
@@ -37,7 +16,8 @@ ul.wizard-steps li {
   </div>
 </div>
 
-<div class="form" tal:condition="not:view/finished">
+<div class="form" tal:condition="not:view/finished"
+    tal:attributes="id string:wizard-step-${view/currentStep/prefix}">
 
   <div class="description"
        tal:condition="view/description"
@@ -57,7 +37,8 @@ ul.wizard-steps li {
     </ul>
   </tal:comment>
 
-  <form action="." method="post" tal:attributes="action request/getURL">
+  <form action="." method="post" tal:attributes="action request/getURL"
+      class="enableUnloadProtection">
     <tal:form define="form nocall:view/currentStep">
       <h2 tal:condition="form/label" tal:content="form/label">
         Subform title

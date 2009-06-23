@@ -1,0 +1,18 @@
+.wizard-buttons {
+    text-align: right;
+}
+ul.wizard-steps {
+    text-align: center;
+}
+ul.wizard-steps li {
+    display: inline;
+    margin-right: 1em;
+}
+.wizard-step-link.selected {
+    font-weight: bold;
+    font-size: 120%;
+}
+.fieldErrorBox .error {
+    border: none;
+    padding: 0;
+}
