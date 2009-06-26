@@ -178,4 +178,6 @@ the data that it receives.  Here's the finishing move:
 Example
 -------
 
-See the collective.megaphone package for an example of this library in use.
+See the `collective.megaphone`_ package for an example of this library in use.
+
+.. _`collective.megaphone`: http://plone.org/products/megaphone

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0b2'
+version = '1.0rc1'
 
 setup(name='collective.z3cform.wizard',
       version=version,
