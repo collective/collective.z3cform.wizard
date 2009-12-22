@@ -16,4 +16,4 @@ class OverridableTemplate(object):
 def location_is_equal(url1, url2):
     proto1, host1, path1, query1, fragment1 = urlsplit(url1)
     proto2, host2, path2, query2, fragment2 = urlsplit(url2)
-    return (proto1 == proto2) & (host1 == host2) & (path1 == path2)
+    return (proto1 == proto2) & (host1 == host2) & (path1.startswith(path2) or path2.startswith(path1))

@@ -4,7 +4,7 @@
         tal:attributes="class python:'wizard-step-link' + ((step is view.currentStep) and ' selected' or '')">
         <a tal:omit-tag="python:not step.available or step is view.currentStep"
            tal:content="string:${repeat/step/number}. ${step/label}"
-           tal:attributes="href string:${view/absolute_url}?step:int=${repeat/step/index}">
+           tal:attributes="href string:${view/absolute_url|string:.}?step:int=${repeat/step/index}">
             Link to step
         </a>
     </li>
@@ -37,8 +37,11 @@
     </ul>
   </tal:comment>
 
-  <form action="." method="post" tal:attributes="action request/getURL"
-      class="enableUnloadProtection">
+  <form action="." method="post"
+        tal:define="form nocall:view/currentStep"
+        tal:attributes="action request/getURL;
+                        enctype form/enctype"
+        class="enableUnloadProtection">
     <tal:form define="form nocall:view/currentStep">
       <h2 tal:condition="form/label" tal:content="form/label">
         Subform title

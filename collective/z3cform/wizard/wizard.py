@@ -131,7 +131,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
         sessionKey = self.sessionKey
         if not self.request.SESSION.has_key(sessionKey):
             self.request.SESSION[sessionKey] = {}
-        if self.request['HTTP_REFERER'].startswith('http'):
+        if self.request.get('HTTP_REFERER', '').startswith('http'):
             if not utils.location_is_equal(self.request['ACTUAL_URL'], self.request['HTTP_REFERER']):
                 self.request.SESSION[sessionKey] = {}
         self.session = self.request.SESSION[sessionKey]

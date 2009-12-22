@@ -4,7 +4,10 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+* Include the form's enctype in the form tag.
 
+* Don't clear the session when traversing over the form to other things (such
+  as a widget).
 
 1.0b2 (2009-06-25)
 ------------------
