@@ -6,7 +6,7 @@ Inspired by and based on the non-session-based wizard in
 collective.singing
 
 collective.z3cform.wizard
-Copyright (C) 2009 ONE/Northwest
+Copyright (C) 2010 Groundwire
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -174,26 +174,6 @@ class Wizard(utils.OverridableTemplate, form.Form):
         self.currentStep.update()
 
     @property
-    def onFirstStep(self):
-        return self.currentIndex == 0
-
-    @button.buttonAndHandler(u'Back',
-                             name='back',
-                             condition=lambda form:not form.onFirstStep)
-    def handleBack(self, action):
-        data, errors = self.currentStep.extractData()
-        if errors:
-            self.status = self.formErrorsMessage
-        else:
-            self.currentStep.applyChanges(data)
-            self.updateCurrentStep(self.currentIndex - 1)
-            
-            # Back can change the conditions for the finish button,
-            # so we need to reconstruct the button actions, since we
-            # do not redirect.
-            self.updateActions()
-
-    @property
     def onLastStep(self):
         return self.currentIndex == len(self.steps) - 1
 
@@ -209,6 +189,26 @@ class Wizard(utils.OverridableTemplate, form.Form):
             self.updateCurrentStep(self.currentIndex + 1)
 
             # Proceed can change the conditions for the finish button,
+            # so we need to reconstruct the button actions, since we
+            # do not redirect.
+            self.updateActions()
+
+    @property
+    def onFirstStep(self):
+        return self.currentIndex == 0
+
+    @button.buttonAndHandler(u'Back',
+                             name='back',
+                             condition=lambda form:not form.onFirstStep)
+    def handleBack(self, action):
+        data, errors = self.currentStep.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+        else:
+            self.currentStep.applyChanges(data)
+            self.updateCurrentStep(self.currentIndex - 1)
+            
+            # Back can change the conditions for the finish button,
             # so we need to reconstruct the button actions, since we
             # do not redirect.
             self.updateActions()

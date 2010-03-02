@@ -1,4 +1,4 @@
-collective.z3cform.wizard is copyright ONE/Northwest
+collective.z3cform.wizard is copyright Groundwire
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

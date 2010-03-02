@@ -1,6 +1,9 @@
 .wizard-buttons {
     text-align: right;
 }
+.wizard-buttons .action {
+    float: right;
+}
 ul.wizard-steps {
     text-align: center;
 }
