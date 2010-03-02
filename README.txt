@@ -135,7 +135,8 @@ Methods:
 Compatibility
 =============
 
-This package has been tested in Zope 2.10 with Plone 3.3.
+This package has been tested in Zope 2.10 with Plone 3.3, and in Zope 2.12 with
+Plone 4.
 
 It should be pretty easy to get it to work in other environments supported by
 z3c.form, such as Zope 3, but I'll need someone familiar with those environments

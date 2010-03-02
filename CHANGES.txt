@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1 (unreleased)
+1.1 (2010-03-01)
 ----------------
 
 * Make sure that the Next button is the default if a step is submitted by
