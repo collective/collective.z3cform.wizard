@@ -50,6 +50,7 @@
       <p class="discreet" tal:content="form/description"/>
       
       <div tal:replace="structure form/render" />
+	
     </tal:form>
 
     <hr/>
