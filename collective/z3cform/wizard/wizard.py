@@ -107,11 +107,6 @@ class GroupStep(group.GroupForm, Step):
         return changed
 
 
-#class Group(group.Group):
-#    def getContent(self):
-#        return self.parentForm.getContent()
-
-
 class Wizard(utils.OverridableTemplate, form.Form):
     """
     Abstract class for a wizard implementing the IWizard interface.

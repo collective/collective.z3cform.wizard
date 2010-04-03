@@ -51,6 +51,17 @@ Additional methods:
     Updates a context based on the session data for this step.
 
 
+Wizard Group Step
+-----------------
+
+Same as a Wizard Step, it just handles a list of groups just like a z3c.forms GroupForm.
+
+Additional attributes:
+
+  groups
+    The list of groups you'd like to show up in the form as separate fieldsets
+
+
 Wizard
 ------
 

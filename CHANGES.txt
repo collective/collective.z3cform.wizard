@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.2 (Unreleased)
+----------------
+
+* added a GroupStep for GroupForm-like integration.
+  [vangheem]
+
 1.1 (2010-03-01)
 ----------------
 
