@@ -15,6 +15,21 @@
   </div>
 </tal:widgets>
 
+<tal:groups define="groups nocall:view/groups|nothing" repeat="group groups">
+	<fieldset class="group" tal:condition="group/widgets" tal:attributes="id string:fieldset-${group/prefix}">
+		<legend tal:content="group/label" />
+		<tal:widgets repeat="widget group/widgets/values">
+		  <div class="row"
+		       tal:define="hidden python:widget.mode == 'hidden'"
+		       tal:omit-tag="hidden">
+
+		    <metal:field use-macro="context/@@ploneform-macros/field" />
+
+		  </div>
+		</tal:widgets>
+  </fieldset>
+</tal:groups>
+
 <metal:use use-macro="context/@@ploneform-macros/actions" />
 
 <div tal:repeat="form view/subforms"

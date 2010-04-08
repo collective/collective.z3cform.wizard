@@ -1,6 +1,7 @@
 import doctest
 import unittest
 
+from zope.testing.doctest import DocFileSuite
 from zope.component import testing, provideAdapter
 import z3c.form.testing
 import plone.z3cform.tests
@@ -25,7 +26,7 @@ class TestRequest(z3c.form.testing.TestRequest):
 def test_suite():
     return unittest.TestSuite([
 
-        doctest.DocFileSuite(
+        DocFileSuite(
             'wizard.txt',
             setUp=setUp,
             tearDown=testing.tearDown,

@@ -10,7 +10,8 @@ with z3c.form first.  Here are some places to start:
 
  * Official documentation: http://docs.zope.org/z3c.form
  
- * Slides from Stephan Richter's tutorial at Plone Conference 2008: http://svn.zope.org/\*checkout\*/z3c.talk/trunk/Z3CForms/Z3CForms.html?rev=92118
+ * Slides from Stephan Richter's tutorial at Plone Conference 2008:
+   http://svn.zope.org/\*checkout\*/z3c.talk/trunk/Z3CForms/Z3CForms.html?rev=92118
  
 
 Wizard Step
@@ -49,6 +50,18 @@ Additional methods:
 
   apply(context):
     Updates a context based on the session data for this step.
+
+
+Wizard Group Step
+-----------------
+
+Same as a Wizard Step; it just handles a list of groups just like a z3c.form
+GroupForm.
+
+Additional attributes:
+
+  groups
+    The list of groups you'd like to show up in the form as separate fieldsets
 
 
 Wizard
@@ -150,3 +163,5 @@ included in the collective.singing package, which was implemented by Daniel
 Nouri.
 
 Session support, miscellaneous improvements, and repackaging by David Glick.
+
+Thanks also to Nathan van Gheem.

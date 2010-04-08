@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import zope.component
 from zope.interface import implements
 from zope.app.pagetemplate import viewpagetemplatefile
-from z3c.form import button, field, form, interfaces
+from z3c.form import button, field, form, interfaces, group
 
 from collective.z3cform.wizard import utils
 from collective.z3cform.wizard.interfaces import IWizard, IStep
@@ -92,6 +92,20 @@ class Step(utils.OverridableTemplate, form.Form):
     
     def apply(self, context, **kw):
         pass
+
+class GroupStep(group.GroupForm, Step):
+    def applyChanges(self, data):
+        """ Override to make sure we use the wizard's session storage for group fields """
+        content = self.getContent()
+        changed = applyChanges(self, content, data)
+        for group in self.groups:
+            groupContent = group.getContent()
+            groupChanged = applyChanges(group, groupContent, data)
+            for interface, names in groupChanged.items():
+                changed[interface] = changed.get(interface, []) + names
+                
+        return changed
+
 
 class Wizard(utils.OverridableTemplate, form.Form):
     """

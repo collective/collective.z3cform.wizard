@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.1'
+version = '1.2'
 
 setup(name='collective.z3cform.wizard',
       version=version,
@@ -27,8 +27,12 @@ setup(name='collective.z3cform.wizard',
       install_requires=[
           'setuptools',
           'plone.z3cform',
+          'Zope2',
           # -*- Extra requirements: -*-
       ],
+      extras_require = dict(
+          test = ['z3c.form[test]']
+          ),
       entry_points="""
       # -*- Entry points: -*-
       """,

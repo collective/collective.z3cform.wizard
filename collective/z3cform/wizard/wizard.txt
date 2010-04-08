@@ -12,6 +12,7 @@ submitted through a user-defined method.
   >>> from zope import schema
   >>> from z3c.form import field, form
   >>> from collective.z3cform.wizard import wizard
+  >>> from plone.z3cform.fieldsets import group
 
   >>> class StepOne(wizard.Step):
   ...     prefix = 'one'
@@ -36,10 +37,21 @@ we need to implement the load and apply methods for our step.
   ...         data = self.getContent()
   ...         pprint('Name from step 2: %s' % data['name'])
 
-  >>> class StepThree(wizard.Step):
-  ...     prefix = 'three'
-  ...     fields = field.Fields(
-  ...         schema.TextLine(__name__='color', title=u'Favorite Color', required=False))
+We can also do group steps
+
+  >>> class AddressGroup(group.Group):
+  ...   fields = field.Fields(
+  ...     schema.TextLine(__name__='address', title=u'Address', required=False),
+  ...     schema.TextLine(__name__='city', title=u'City', required=False),
+  ...     schema.TextLine(__name__='state', title=u'State', required=False))
+  ...   label = u"Address Information"
+  ...   prefix = 'address'
+
+  >>> class StepThree(wizard.GroupStep):
+  ...   prefix = 'three'
+  ...   fields = field.Fields()
+  ...   groups = [AddressGroup]
+
 
 We can now define our minimal wizard:
 
@@ -136,14 +148,13 @@ Submit the first step successfully
       <hr />
       <div class="wizard-buttons">
           <div class="action">
-            <input id="form-buttons-back" name="form.buttons.back"
-                   class="submit-widget button-field" value="Back"
+            <input id="form-buttons-continue" name="form.buttons.continue"
+                   class="submit-widget button-field" value="Continue"
                    type="submit" />
           </div>
           <div class="action">
-            <input id="form-buttons-continue"
-                   name="form.buttons.continue"
-                   class="submit-widget button-field" value="Continue"
+            <input id="form-buttons-back" name="form.buttons.back"
+                   class="submit-widget button-field" value="Back"
                    type="submit" />
           </div>
       </div>
@@ -158,10 +169,11 @@ Step two works similarly:
   >>> request.form['two.widgets.name'] = u'David'
   >>> wizard = Wizard(None, request)
   >>> html = wizard()
-  >>> 'three' in html, 'Finish' in html
-  (True, True)
+  >>> 'three' in html, 'Address' in html, 'City' in html, 'State' in html, 'Finish' in html
+  (True, True, True, True, True)
 
-Step three: Slaying the dragon
+
+Step Three: Slaying the dragon
 ------------------------------
 
 Now let's press the Finish button.  We expect this to print out the value
