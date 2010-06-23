@@ -168,6 +168,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
         self.updateActions()
         self.actions.execute()
+        self.updateWidgets()
 
     def updateActions(self):
         """
