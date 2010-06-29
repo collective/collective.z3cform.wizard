@@ -145,8 +145,13 @@ class Wizard(utils.OverridableTemplate, form.Form):
         sessionKey = self.sessionKey
         if not self.request.SESSION.has_key(sessionKey):
             self.request.SESSION[sessionKey] = {}
-        if self.request.get('HTTP_REFERER', '').startswith('http'):
-            if not utils.location_is_equal(self.request['ACTUAL_URL'], self.request['HTTP_REFERER']):
+        # Reset session if we came from a URL different from that of the wizard,
+        # unless it's the URL that's used during z3cform inline validation.
+        referer = self.request.get('HTTP_REFERER', '')
+        url = self.request['ACTUAL_URL']
+        if referer.startswith('http') and 'kss_z3cform_inline_validation' not in url:
+            if not utils.location_is_equal(url, referer):
+                import pdb; pdb.set_trace( )
                 self.request.SESSION[sessionKey] = {}
         self.session = self.request.SESSION[sessionKey]
 

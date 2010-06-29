@@ -1,8 +1,11 @@
 Changelog
 =========
 
-1.4 (unreleased)
+1.4 (2010-06-28)
 ----------------
+
+* Avoid clobbering the session during plone.app.z3cform's inline validation.
+  [davisagli]
 
 1.3 (2010-06-23)
 ----------------
