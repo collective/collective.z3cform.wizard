@@ -70,7 +70,7 @@ Let's render the form for the first time now:
   <...
   <div class="form" id="wizard-step-one">
     <form action="http://127.0.0.1" method="post"
-          class="enableUnloadProtection"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
           enctype="multipart/form-data">
         <p class="discreet"></p>
     <div class="row">
@@ -126,7 +126,7 @@ Submit the first step successfully
   <...
   <div class="form" id="wizard-step-two">
     <form action="http://127.0.0.1" method="post"
-          class="enableUnloadProtection"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
           enctype="multipart/form-data">
         <p class="discreet"></p>
     <div class="row">
