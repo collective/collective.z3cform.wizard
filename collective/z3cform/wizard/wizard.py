@@ -151,7 +151,6 @@ class Wizard(utils.OverridableTemplate, form.Form):
         url = self.request['ACTUAL_URL']
         if referer.startswith('http') and 'kss_z3cform_inline_validation' not in url:
             if not utils.location_is_equal(url, referer):
-                import pdb; pdb.set_trace( )
                 self.request.SESSION[sessionKey] = {}
         self.session = self.request.SESSION[sessionKey]
 
