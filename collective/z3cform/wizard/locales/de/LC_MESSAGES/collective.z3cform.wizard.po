@@ -1,0 +1,37 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2010-09-09 14:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: Christian Stengel\n"
+"Language-Team: Christian Stengel\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: de\n"
+"Language-Name: Deutsch\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: collective.z3cform.wizard\n"
+"X-Is-Fallback-For: de-at de-li de-lu de-ch de-de de\n"
+
+#: ./wizard.py:219
+msgid "Back"
+msgstr "Zurück"
+
+#: ./wizard.py:199
+msgid "Continue"
+msgstr "Weiter"
+
+#: ./wizard.py:242
+msgid "Finish"
+msgstr "Abschließen"
+
+#: ./wizard.py:119
+msgid "Information submitted successfully."
+msgstr "Informationen erfolgreich gespeichert"
+
+#: ./wizard.py:120
+msgid "There were errors."
+msgstr "Es sind Fehler aufgetreten"
+

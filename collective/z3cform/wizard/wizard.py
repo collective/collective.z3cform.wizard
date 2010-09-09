@@ -196,7 +196,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
     def onLastStep(self):
         return self.currentIndex == len(self.steps) - 1
 
-    @button.buttonAndHandler(u'Continue',
+    @button.buttonAndHandler(_(u'Continue'),
                              name='continue',
                              condition=lambda form:not form.onLastStep)
     def handleContinue(self, action):
@@ -216,7 +216,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
     def onFirstStep(self):
         return self.currentIndex == 0
 
-    @button.buttonAndHandler(u'Back',
+    @button.buttonAndHandler(_(u'Back'),
                              name='back',
                              condition=lambda form:not form.onFirstStep)
     def handleBack(self, action):
@@ -239,7 +239,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
                 return False
         return True
 
-    @button.buttonAndHandler(u'Finish',
+    @button.buttonAndHandler(_(u'Finish'),
                              name='finish',
                              condition=lambda form:form.allStepsFinished or form.onLastStep)
     def handleFinish(self, action):
