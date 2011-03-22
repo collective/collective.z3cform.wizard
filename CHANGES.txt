@@ -1,9 +1,11 @@
 Changelog
 =========
 
-1.4 (unreleased)
-----------------
+1.3.3 (2011-03-22)
+------------------
 
+* Normalize @@ view prefix when comparing URLs.
+  [davisagli]
 
 1.3.2 (2010-07-27)
 ------------------
