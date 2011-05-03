@@ -54,10 +54,10 @@
     </tal:form>
 
     <hr/>
-    <div class="wizard-buttons">
-        <div class="action" tal:repeat="action view/actions/values">
-          <input type="submit" tal:replace="structure action/render"/>
-        </div>
+    <div class="formControls wizard-buttons" tal:condition="view/actions/values|nothing">
+        <tal:block repeat="action view/actions/values">
+            <input type="submit" tal:replace="structure action/render" />
+        </tal:block>
     </div>
   </form>
 </div>

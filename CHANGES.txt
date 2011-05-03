@@ -4,6 +4,9 @@ Changelog
 1.3.4 (unreleased)
 ------------------
 
+* Tweak wizard-buttons to conform to standard plone formControls.
+  [elro]
+
 * Remove div.row from wizard-step.pt.
   [elro]
 
