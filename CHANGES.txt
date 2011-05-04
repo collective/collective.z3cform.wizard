@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.1 (unreleased)
+1.4.1 (2011-05-04)
 ------------------
 
 * Add an AutoWizard for use with plone.autoform.
