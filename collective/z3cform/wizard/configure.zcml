@@ -5,6 +5,7 @@
     i18n_domain="collective.z3cform.wizard">
 
   <include package="plone.z3cform"/>
+  <include package="Products.statusmessages"/>
 
   <i18n:registerTranslations directory="locales" />
 

@@ -13,6 +13,8 @@ submitted through a user-defined method.
   >>> from z3c.form import field, form
   >>> from collective.z3cform.wizard import wizard
   >>> from plone.z3cform.fieldsets import group
+  >>> from Products.statusmessages.interfaces import IStatusMessage
+  >>> from Products.statusmessages.adapter import _decodeCookieValue
 
   >>> class StepOne(wizard.Step):
   ...     prefix = 'one'
@@ -73,7 +75,6 @@ Let's render the form for the first time now:
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
           enctype="multipart/form-data">
         <p class="discreet"></p>
-    <div class="row">
         <div class="field">
           <label for="one-widgets-age">
             <span>Age</span>
@@ -88,15 +89,11 @@ Let's render the form for the first time now:
                    type="text" />
           </div>
         </div>
-    </div>
-    <hr />
-    <div class="wizard-buttons">
-        <div class="action">
-            <input id="form-buttons-continue"
-                   name="form.buttons.continue"
-                   class="submit-widget button-field" value="Continue"
-                   type="submit" />
-        </div>
+    <div class="formControls wizard-buttons">
+        <input id="form-buttons-continue"
+               name="form.buttons.continue"
+               class="submit-widget button-field" value="Continue"
+               type="submit" />
     </div>
     </form>
   </div>
@@ -111,11 +108,15 @@ Remember that our first step requires the age.
   ...     'form.buttons.continue': u'Continue',
   ... }
   >>> wizard = Wizard(None, request)
+
   >>> print wizard()
   <...
-  <div class="form" id="wizard-step-one">
-  ...There were errors...
   ...Required input is missing...
+
+  >>> messages = _decodeCookieValue(request.__annotations__.pop('statusmessages'))
+  >>> [(m.message, m.type) for m in messages]
+  [(u'There were errors.', u'error')]
+
 
 Submit the first step successfully
 ----------------------------------
@@ -129,7 +130,6 @@ Submit the first step successfully
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
           enctype="multipart/form-data">
         <p class="discreet"></p>
-    <div class="row">
         <div class="field">
           <label for="two-widgets-name">
             <span>Name</span>
@@ -144,19 +144,13 @@ Submit the first step successfully
                    value="David" type="text" />
           </div>  
         </div>
-    </div>
-      <hr />
-      <div class="wizard-buttons">
-          <div class="action">
-            <input id="form-buttons-continue" name="form.buttons.continue"
-                   class="submit-widget button-field" value="Continue"
-                   type="submit" />
-          </div>
-          <div class="action">
-            <input id="form-buttons-back" name="form.buttons.back"
-                   class="submit-widget button-field" value="Back"
-                   type="submit" />
-          </div>
+      <div class="formControls wizard-buttons">
+        <input id="form-buttons-continue" name="form.buttons.continue"
+               class="submit-widget button-field" value="Continue"
+               type="submit" />
+        <input id="form-buttons-back" name="form.buttons.back"
+               class="submit-widget button-field" value="Back"
+               type="submit" />
       </div>
     </form>
   </div>
@@ -187,11 +181,9 @@ the data that it receives.  Here's the finishing move:
   >>> html = wizard()
   'Name from step 2: David'
 
-  >>> print html
-  <...
-  <div class="form">
-    <div class="portalMessage">Information submitted successfully.</div>
-  </div>...
+  >>> messages = _decodeCookieValue(request.__annotations__.pop('statusmessages'))
+  >>> [(m.message, m.type) for m in messages]
+  [(u'Information submitted successfully.', u'info')]
 
 
 Example

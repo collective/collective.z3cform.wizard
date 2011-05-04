@@ -10,22 +10,12 @@
     </li>
 </ul>
 
-<div class="form" tal:condition="view/finished">
-  <div class="portalMessage"
-       tal:condition="view/status" tal:content="view/status">
-  </div>
-</div>
-
 <div class="form" tal:condition="not:view/finished"
     tal:attributes="id string:wizard-step-${view/currentStep/prefix}">
 
   <div class="description"
        tal:condition="view/description"
        tal:content="structure view/description">Form description</div>
-
-  <div class="portalMessage"
-       tal:condition="view/status" tal:content="view/status">
-  </div>
 
   <tal:comment condition="nothing">
     <ul tal:define="errors view/currentStep/widgets/errors"
@@ -50,10 +40,9 @@
       <p class="discreet" tal:content="form/description"/>
       
       <div tal:replace="structure form/render" />
-	
+
     </tal:form>
 
-    <hr/>
     <div class="formControls wizard-buttons" tal:condition="view/actions/values|nothing">
         <tal:block repeat="action view/actions/values">
             <input type="submit" tal:replace="structure action/render" />

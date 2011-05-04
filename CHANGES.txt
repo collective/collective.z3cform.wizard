@@ -4,6 +4,12 @@ Changelog
 1.3.4 (unreleased)
 ------------------
 
+* Remove <hr />
+  [elro]
+
+* Use Products.statusmessages.
+  [elro]
+
 * Tweak wizard-buttons to conform to standard plone formControls.
   [elro]
 

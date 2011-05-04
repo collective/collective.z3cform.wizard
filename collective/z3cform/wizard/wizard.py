@@ -27,6 +27,7 @@ import zope.component
 from zope.interface import implements
 from zope.app.pagetemplate import viewpagetemplatefile
 from z3c.form import button, field, form, interfaces, group
+from Products.statusmessages.interfaces import IStatusMessage
 
 from collective.z3cform.wizard import utils
 from collective.z3cform.wizard.interfaces import IWizard, IStep
@@ -200,9 +201,11 @@ class Wizard(utils.OverridableTemplate, form.Form):
                              name='continue',
                              condition=lambda form:not form.onLastStep)
     def handleContinue(self, action):
+        messages = IStatusMessage(self.request)
         data, errors = self.currentStep.extractData()
         if errors:
             self.status = self.formErrorsMessage
+            messages.addStatusMessage(self.status, type="error")
         else:
             self.currentStep.applyChanges(data)
             self.updateCurrentStep(self.currentIndex + 1)
@@ -220,9 +223,11 @@ class Wizard(utils.OverridableTemplate, form.Form):
                              name='back',
                              condition=lambda form:not form.onFirstStep)
     def handleBack(self, action):
+        messages = IStatusMessage(self.request)
         data, errors = self.currentStep.extractData()
         if errors:
             self.status = self.formErrorsMessage
+            messages.addStatusMessage(self.status, type="error")
         else:
             self.currentStep.applyChanges(data)
             self.updateCurrentStep(self.currentIndex - 1)
@@ -243,13 +248,16 @@ class Wizard(utils.OverridableTemplate, form.Form):
                              name='finish',
                              condition=lambda form:form.allStepsFinished or form.onLastStep)
     def handleFinish(self, action):
+        messages = IStatusMessage(self.request)
         data, errors = self.currentStep.extractData()
         if errors:
             self.status = self.formErrorsMessage
+            messages.addStatusMessage(self.status, type="error")
             return
         else:
             self.status = self.successMessage
             self.finished = True
+            messages.addStatusMessage(self.status, type="info")
         self.currentStep.applyChanges(data)
         self.finish()
         # clear out the session

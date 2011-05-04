@@ -26,7 +26,8 @@ setup(name='collective.z3cform.wizard',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'plone.z3cform',
+          'plone.z3cform>=0.7.4',
+          'Products.statusmessages',
           'Zope2',
           # -*- Extra requirements: -*-
       ],
