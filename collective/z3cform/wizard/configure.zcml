@@ -17,6 +17,7 @@
   <adapter
       zcml:condition="installed plone.autoform"
       factory=".autowizard.AutoWizardWidgetTraversal"
+      name="widget"
       />
 
 </configure>
