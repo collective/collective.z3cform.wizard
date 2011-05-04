@@ -200,3 +200,68 @@ Example
 See the `collective.megaphone`_ package for an example of this library in use.
 
 .. _`collective.megaphone`: http://plone.org/products/megaphone
+
+
+AutoWizard
+----------
+
+An AutoWizard creates steps out of plone.autoform fieldsets (including those
+in a plone.supermodel xml schema).
+
+First we define our schema:
+
+  >>> from plone.supermodel.interfaces import FIELDSETS_KEY
+  >>> from plone.supermodel.model import Fieldset
+  >>> from zope.interface import Interface, taggedValue
+  >>> class IMySchema(Interface):
+  ...     age = schema.Int(title=u"Age")
+  ...     name = schema.Int(title=u"Name")
+  ...     taggedValue(FIELDSETS_KEY, [
+  ...         Fieldset('one', label=u"One from fieldset", fields=['age']),
+  ...         Fieldset('two', fields=['name']),
+  ...         ])
+
+Then create the AutoWizard class:
+
+  >>> from collective.z3cform.wizard import autowizard
+  >>> class AutoWizard(autowizard.AutoWizard):
+  ...     label = u"Automatically silly wizard."
+  ...     schema = IMySchema
+
+
+We can now render the form:
+
+  >>> request = TestRequest()
+  >>> wizard = AutoWizard(None, request)
+  >>> print wizard()
+  <...
+  <div class="form" id="wizard-step-form-one">
+    <form action="http://127.0.0.1" method="post"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
+          enctype="multipart/form-data">
+        <h2>One from fieldset</h2>
+        <p class="discreet"></p>
+        <div class="field">
+          <label for="form-one-widgets-age">
+            <span>Age</span>
+          </label>...
+          <span class="fieldRequired"
+                title="Required">
+            (Required)
+          </span>
+          <div class="widget">
+            <input id="form-one-widgets-age" name="form.one.widgets.age"
+                   class="text-widget required int-field" value=""
+                   type="text" />
+          </div>
+        </div>
+    <div class="formControls wizard-buttons">
+        <input id="form-buttons-continue"
+               name="form.buttons.continue"
+               class="submit-widget button-field" value="Continue"
+               type="submit" />
+    </div>
+    </form>
+  </div>
+
+Otherwise it works in exactly the same way as the standard Wizard.

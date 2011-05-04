@@ -69,7 +69,7 @@ class Step(utils.OverridableTemplate, form.Form):
     
     wizard = None
     completed = True
-    
+
     @property
     def available(self):
         if self.prefix in self.request.SESSION[self.wizard.sessionKey]:

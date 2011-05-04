@@ -11,7 +11,7 @@
 </ul>
 
 <div class="form" tal:condition="not:view/finished"
-    tal:attributes="id string:wizard-step-${view/currentStep/prefix}">
+    tal:attributes="id string:wizard-step-${view/currentStep/id}">
 
   <div class="description"
        tal:condition="view/description"

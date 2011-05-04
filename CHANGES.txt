@@ -4,6 +4,9 @@ Changelog
 1.4.1 (unreleased)
 ------------------
 
+* Add an AutoWizard for use with plone.autoform.
+  [elro]
+
 * Add a Clear button that clears the session and goes back to step 1.
   [elro]
 
