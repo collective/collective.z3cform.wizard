@@ -264,6 +264,20 @@ class Wizard(utils.OverridableTemplate, form.Form):
             # do not redirect.
             self.updateActions()
 
+    def showClear(self):
+        values = [v for v in self.session.values() if isinstance(v, dict)]
+        return len(values) > 1 or any(values)
+
+    @button.buttonAndHandler(_(u'Clear'), name='clear', condition=showClear)
+    def handleClear(self, action):
+        self.session.clear()
+        self.sync()
+        self.status = _(u"Form cleared.")
+        self.updateCurrentStep(0)
+        self.updateActions()
+        self.currentStep.ignoreRequest = True
+        self.currentStep.update()
+
     def jump(self, step_idx):
         # make sure target is available
         try:
