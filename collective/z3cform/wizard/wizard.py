@@ -119,6 +119,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     successMessage = _(u"Information submitted successfully.")
     formErrorsMessage = _(u"There were errors.")
+    clearMessage = _(u"Form cleared.")
 
     index = viewpagetemplatefile.ViewPageTemplateFile('wizard.pt')
     
@@ -272,7 +273,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
     def handleClear(self, action):
         self.session.clear()
         self.sync()
-        self.status = _(u"Form cleared.")
+        self.status = self.clearMessage
         self.updateCurrentStep(0)
         self.updateActions()
         self.currentStep.ignoreRequest = True
