@@ -4,6 +4,8 @@ Changelog
 1.4.1 (unreleased)
 ------------------
 
+* Reorder buttons so Finish and Continue both appear before Back.
+  [elro]
 
 1.4 (2011-05-04)
 ----------------

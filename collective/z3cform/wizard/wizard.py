@@ -216,28 +216,6 @@ class Wizard(utils.OverridableTemplate, form.Form):
             self.updateActions()
 
     @property
-    def onFirstStep(self):
-        return self.currentIndex == 0
-
-    @button.buttonAndHandler(_(u'Back'),
-                             name='back',
-                             condition=lambda form:not form.onFirstStep)
-    def handleBack(self, action):
-        messages = IStatusMessage(self.request)
-        data, errors = self.currentStep.extractData()
-        if errors:
-            self.status = self.formErrorsMessage
-            messages.addStatusMessage(self.status, type="error")
-        else:
-            self.currentStep.applyChanges(data)
-            self.updateCurrentStep(self.currentIndex - 1)
-            
-            # Back can change the conditions for the finish button,
-            # so we need to reconstruct the button actions, since we
-            # do not redirect.
-            self.updateActions()
-
-    @property
     def allStepsFinished(self):
         for step in self.activeSteps:
             if not step.available:
@@ -263,6 +241,28 @@ class Wizard(utils.OverridableTemplate, form.Form):
         # clear out the session
         self.request.SESSION[self.sessionKey] = {}
         self.sync()
+
+    @property
+    def onFirstStep(self):
+        return self.currentIndex == 0
+
+    @button.buttonAndHandler(_(u'Back'),
+                             name='back',
+                             condition=lambda form:not form.onFirstStep)
+    def handleBack(self, action):
+        messages = IStatusMessage(self.request)
+        data, errors = self.currentStep.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            messages.addStatusMessage(self.status, type="error")
+        else:
+            self.currentStep.applyChanges(data)
+            self.updateCurrentStep(self.currentIndex - 1)
+            
+            # Back can change the conditions for the finish button,
+            # so we need to reconstruct the button actions, since we
+            # do not redirect.
+            self.updateActions()
 
     def jump(self, step_idx):
         # make sure target is available
