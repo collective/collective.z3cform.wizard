@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.3.4dev'
+version = '1.4'
 
 setup(name='collective.z3cform.wizard',
       version=version,
@@ -26,7 +26,7 @@ setup(name='collective.z3cform.wizard',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'plone.z3cform>=0.7.4',
+          'plone.z3cform>=0.7.5',
           'Products.statusmessages',
           'Zope2',
           # -*- Extra requirements: -*-
