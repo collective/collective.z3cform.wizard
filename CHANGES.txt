@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.4.3 (2011-07-13)
+------------------
+
+* Don't count browser views when determining if the user has left the
+  wizard.
+  [davisagli]
+
 1.4.2 (2011-05-04)
 ------------------
 
