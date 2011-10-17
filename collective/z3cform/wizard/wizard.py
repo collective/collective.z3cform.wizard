@@ -267,7 +267,12 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     def showClear(self):
         values = [v for v in self.session.values() if isinstance(v, dict)]
-        return len(values) > 1 or any(values)
+        if len(values) > 1:
+            return True
+        for value in values:
+            if value:
+                return True
+        return False
 
     @button.buttonAndHandler(_(u'Clear'), name='clear', condition=showClear)
     def handleClear(self, action):

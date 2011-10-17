@@ -1,8 +1,11 @@
 Changelog
 =========
 
-1.4.4 (unreleased)
+1.4.4 (2011-10-17)
 ------------------
+
+* Avoid using any() to restore compatibility with Python 2.4.
+  [davisagli]
 
 1.4.3 (2011-07-13)
 ------------------
