@@ -3,9 +3,8 @@
         class="wizard-step-link"
         tal:attributes="class python:'wizard-step-link' + ((step is view.currentStep) and ' selected' or '')">
         <a tal:omit-tag="python:not step.available or step is view.currentStep"
-           tal:content="string:${repeat/step/number}. ${step/label}"
            tal:attributes="href string:${view/absolute_url|string:.}?step:int=${repeat/step/index}">
-            Link to step
+            <tal:block tal:replace="repeat/step/number"/>. <tal:block tal:replace="step/label"/>
         </a>
     </li>
 </ul>

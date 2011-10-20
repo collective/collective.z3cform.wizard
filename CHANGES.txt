@@ -1,8 +1,11 @@
 Changelog
 =========
 
-1.4.5 (unreleased)
+1.4.5 (2011-10-19)
 ------------------
+
+* Make sure wizard step labels are translated.
+  [davisagli]
 
 1.4.4 (2011-10-17)
 ------------------
