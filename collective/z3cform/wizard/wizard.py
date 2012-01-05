@@ -253,25 +253,23 @@ class Wizard(utils.OverridableTemplate, form.Form):
                              condition=lambda form:not form.onFirstStep)
     def handleBack(self, action):
         messages = IStatusMessage(self.request)
-        data, errors = self.currentStep.extractData()
-                
-        if self.validate_back == False:
-            # If 'validate_back' is False, skip the error handling
-            # and abandon the data for this Step
-            self.updateCurrentStep(self.currentIndex - 1)
-            self.updateActions()
-        else:
+        
+        if self.validate_back:
+            # if true, only allow navigating back if the current
+            # step validates
+            data, errors = self.currentStep.extractData()
             if errors:
                 self.status = self.formErrorsMessage
                 messages.addStatusMessage(self.status, type="error")
-            else:
-                self.currentStep.applyChanges(data)
-                self.updateCurrentStep(self.currentIndex - 1)
-                
-                # Back can change the conditions for the finish button,
-                # so we need to reconstruct the button actions, since we
-                # do not redirect.
-                self.updateActions()
+                return
+            self.currentStep.applyChanges(data)
+
+        self.updateCurrentStep(self.currentIndex - 1)
+
+        # Back can change the conditions for the finish button,
+        # so we need to reconstruct the button actions, since we
+        # do not redirect.
+        self.updateActions()
 
     def showClear(self):
         values = [v for v in self.session.values() if isinstance(v, dict)]
