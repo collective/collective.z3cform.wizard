@@ -39,6 +39,9 @@ Additional attributes:
     next step.  Defaults to True.  If False, the Continue button will be
     disabled.
 
+  cssid
+    String. A user-supplied CSS id for the form tag.
+
 Additional methods:
 
   applyChanges(data)
@@ -109,6 +112,11 @@ Attributes set during the update method:
 
   absolute_url
     The URL of the wizard.
+
+  validate_back
+    Boolean.  True if you want the Wizard to validate the input if a user
+    uses the Back button on a Step.  False if you don't and abandon
+    all user input (data).  Default behavior is True.  [Spanky]
 
 Methods:
 

@@ -57,6 +57,12 @@ class IWizard(IForm):
         The URL of the wizard.
         """)
 
+    validate_back = Attribute("""
+        Boolean.  True if you want the Wizard to validate the input if a user
+        uses the Back button on a Step.  False if you don't and abandon
+        all user input (data).  Default behavior is True.  [Spanky]
+        """)
+    
     def initialize():
         """
         Called the first time a wizard is viewed in a given session.
@@ -110,7 +116,14 @@ class IStep(IForm):
     within the wizard's session, with a key equal to the step's prefix.
     """
     
-    label = Attribute('Title displayed at the top of the wizard step.')
+    label = Attribute("""
+        Title displayed at the top of the wizard step.
+        """)
+    
+    cssid = Attribute("""
+        A user-supplied CSS id for the form tag.
+        """)
+    
     description = Attribute("""
         Description displayed at the top of the wizard step.
         """)

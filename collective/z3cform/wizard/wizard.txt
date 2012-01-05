@@ -7,7 +7,7 @@ Define a wizard with three steps
 To define a form that uses the wizard, we'll need to define steps.
 These steps represent individual forms that are processed
 sequentially.  Only when the last step is completed will the data be
-submitted through a user-defined method.
+submitted through a user-defined method. 
 
   >>> from zope import schema
   >>> from z3c.form import field, form
@@ -16,8 +16,11 @@ submitted through a user-defined method.
   >>> from Products.statusmessages.interfaces import IStatusMessage
   >>> from Products.statusmessages.adapter import _decodeCookieValue
 
+Note that we add a 'cssid' to Step One to test it in rendered 
+
   >>> class StepOne(wizard.Step):
   ...     prefix = 'one'
+  ...     cssid = 'wizard-step-one-id'
   ...     fields = field.Fields(
   ...         schema.Int(__name__='age', title=u"Age"))
 
@@ -29,7 +32,8 @@ we need to implement the load and apply methods for our step.
   >>> class StepTwo(wizard.Step):
   ...     prefix = 'two'
   ...     fields = field.Fields(
-  ...         schema.TextLine(__name__='name', title=u"Name", required=True))
+  ...         schema.TextLine(__name__='name', title=u"Name", required=True),
+  ...         schema.TextLine(__name__='beer', title=u'Favorite Beer', required=True))
   ...         
   ...     def load(self, context):
   ...         data = self.getContent()
@@ -73,7 +77,7 @@ Let's render the form for the first time now:
   <div class="form" id="wizard-step-one">
     <form action="http://127.0.0.1" method="post"
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
-          enctype="multipart/form-data">
+          id="wizard-step-one-id" enctype="multipart/form-data">
         <p class="discreet"></p>
         <div class="field">
           <label for="one-widgets-age">
@@ -132,7 +136,7 @@ Submit the first step successfully
   <div class="form" id="wizard-step-two">
     <form action="http://127.0.0.1" method="post"
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
-          enctype="multipart/form-data">
+          id="" enctype="multipart/form-data">
         <p class="discreet"></p>
         <div class="field">
           <label for="two-widgets-name">
@@ -146,6 +150,20 @@ Submit the first step successfully
             <input id="two-widgets-name" name="two.widgets.name"
                    class="text-widget required textline-field"
                    value="David" type="text" />
+          </div>  
+        </div>
+        <div class="field">
+          <label for="two-widgets-beer">
+            <span>Favorite Beer</span>
+          </label>
+          <span class="fieldRequired"
+                title="Required">
+            (Required)
+          </span>
+          <div class="widget">
+            <input id="two-widgets-beer" name="two.widgets.beer"
+                   class="text-widget required textline-field"
+                   value="" type="text" />
           </div>  
         </div>
       <div class="formControls wizard-buttons">
@@ -163,8 +181,43 @@ Submit the first step successfully
     </form>
   </div>
 
+
+Going backwards
+---------------
+
+When we go back, we should get validation errors, because we left a field blank:
+
+  >>> request.form['form.buttons.back'] = u'Back'
+  >>> wizard = Wizard(None, request)
+  >>> print wizard()
+  <...
+  ...Required input is missing...
+
+  >>> messages = _decodeCookieValue(request.__annotations__.pop('statusmessages'))
+  >>> [(m.message, m.type) for m in messages]
+  [(u'There were errors.', u'error')]
+
+Now if we set validate_back to False it should be possible to go back with no errors:
+
+  >>> request.form['form.buttons.back'] = u'Back'
+  >>> wizard = Wizard(None, request)
+  >>> wizard.validate_back = False
+  >>> html = wizard()
+  >>> 'wizard-step-one' in html
+  (True)
+
+Make sure we get back to step two (again):
+
+  >>> wizard = Wizard(None, request)
+  >>> html = wizard()
+  >>> 'wizard-step-two' in html
+
 Submitting step two
 -------------------
+
+Fill in the missing value:
+
+  >>> request.form['one.widgets.beer'] = u'Boont Amber'
 
 Step two works similarly:
 
@@ -173,7 +226,6 @@ Step two works similarly:
   >>> html = wizard()
   >>> 'three' in html, 'Address' in html, 'City' in html, 'State' in html, 'Finish' in html
   (True, True, True, True, True)
-
 
 Step Three: Slaying the dragon
 ------------------------------
@@ -238,7 +290,7 @@ We can now render the form:
   <div class="form" id="wizard-step-form-one">
     <form action="http://127.0.0.1" method="post"
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
-          enctype="multipart/form-data">
+          id="" enctype="multipart/form-data">
         <h2>One from fieldset</h2>
         <p class="discreet"></p>
         <div class="field">
