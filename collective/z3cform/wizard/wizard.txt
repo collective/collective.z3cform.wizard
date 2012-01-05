@@ -187,6 +187,7 @@ Going backwards
 
 When we go back, we should get validation errors, because we left a field blank:
 
+  >>> del request.form['form.buttons.continue']
   >>> request.form['form.buttons.back'] = u'Back'
   >>> wizard = Wizard(None, request)
   >>> print wizard()
@@ -204,20 +205,23 @@ Now if we set validate_back to False it should be possible to go back with no er
   >>> wizard.validate_back = False
   >>> html = wizard()
   >>> 'wizard-step-one' in html
-  (True)
+  True
 
 Make sure we get back to step two (again):
 
+  >>> del request.form['form.buttons.back']
+  >>> request.form['form.buttons.continue'] = u'Continue'
   >>> wizard = Wizard(None, request)
   >>> html = wizard()
   >>> 'wizard-step-two' in html
+  True
 
 Submitting step two
 -------------------
 
 Fill in the missing value:
 
-  >>> request.form['one.widgets.beer'] = u'Boont Amber'
+  >>> request.form['two.widgets.beer'] = u'Boont Amber'
 
 Step two works similarly:
 
