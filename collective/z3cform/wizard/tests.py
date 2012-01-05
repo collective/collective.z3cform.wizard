@@ -10,8 +10,7 @@ import z3c.form.testing
 import plone.z3cform.tests
 import Products.statusmessages
 import zope.component
-import zope.app.component
-import zope.app.security
+import zope.security
 import zope.i18n
 import z3c.form
 from z3c.form.datamanager import DictionaryField
@@ -22,11 +21,9 @@ def setUp(test):
     plone.z3cform.tests.setup_defaults()
     provideAdapter(DictionaryField)
     xmlconfig.XMLConfig('meta.zcml', zope.component)()
-    xmlconfig.XMLConfig('meta.zcml', zope.app.component)()
-    xmlconfig.XMLConfig('meta.zcml', zope.app.security)()
+    xmlconfig.XMLConfig('meta.zcml', zope.security)()
     xmlconfig.XMLConfig('meta.zcml', zope.i18n)()
     xmlconfig.XMLConfig('meta.zcml', z3c.form)()
-    xmlconfig.XMLConfig('configure.zcml', zope.app.security)()
     xmlconfig.XMLConfig('configure.zcml', z3c.form)()
     xmlconfig.XMLConfig('configure.zcml', Products.statusmessages)()
 
