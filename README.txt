@@ -172,4 +172,4 @@ Nouri.
 
 Session support, miscellaneous improvements, and repackaging by David Glick.
 
-Thanks also to Nathan van Gheem.
+Thanks also to Nathan van Gheem, Laurence Rowe, and Tom "Spanky" Kapanka.
