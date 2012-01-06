@@ -16,11 +16,8 @@ submitted through a user-defined method.
   >>> from Products.statusmessages.interfaces import IStatusMessage
   >>> from Products.statusmessages.adapter import _decodeCookieValue
 
-Note that we add a 'cssid' to Step One to test it in rendered 
-
   >>> class StepOne(wizard.Step):
   ...     prefix = 'one'
-  ...     cssid = 'wizard-step-one-id'
   ...     fields = field.Fields(
   ...         schema.Int(__name__='age', title=u"Age"))
 
@@ -77,7 +74,7 @@ Let's render the form for the first time now:
   <div class="form" id="wizard-step-one">
     <form action="http://127.0.0.1" method="post"
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
-          id="wizard-step-one-id" enctype="multipart/form-data">
+          id="one" enctype="multipart/form-data">
         <p class="discreet"></p>
         <div class="field">
           <label for="one-widgets-age">
@@ -136,7 +133,7 @@ Submit the first step successfully
   <div class="form" id="wizard-step-two">
     <form action="http://127.0.0.1" method="post"
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
-          id="" enctype="multipart/form-data">
+          id="two" enctype="multipart/form-data">
         <p class="discreet"></p>
         <div class="field">
           <label for="two-widgets-name">
@@ -294,7 +291,7 @@ We can now render the form:
   <div class="form" id="wizard-step-form-one">
     <form action="http://127.0.0.1" method="post"
           class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
-          id="" enctype="multipart/form-data">
+          id="form-one" enctype="multipart/form-data">
         <h2>One from fieldset</h2>
         <p class="discreet"></p>
         <div class="field">

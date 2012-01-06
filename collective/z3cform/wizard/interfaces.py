@@ -120,10 +120,6 @@ class IStep(IForm):
         Title displayed at the top of the wizard step.
         """)
     
-    cssid = Attribute("""
-        A user-supplied CSS id for the form tag.
-        """)
-    
     description = Attribute("""
         Description displayed at the top of the wizard step.
         """)

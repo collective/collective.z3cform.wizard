@@ -66,7 +66,6 @@ class Step(utils.OverridableTemplate, form.Form):
     subforms = ()
     label = u""
     description = u""
-    cssid = u""
     wizard = None
     completed = True
 

@@ -7,8 +7,7 @@ Changelog
   uses the Back button.  Default remains unchanged.
   [spanky]
 
-* Add "cssid" attribute to Steps to allow the developer to specify
-  a string to be used as the ID of the form tag
+* Add "id" as an attribute of the form tag
   [spanky]
 
 1.4.6 (2011-10-19)
