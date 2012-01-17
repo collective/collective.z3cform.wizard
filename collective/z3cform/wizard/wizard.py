@@ -57,11 +57,11 @@ def applyChanges(form, content, data):
 class Step(utils.OverridableTemplate, form.Form):
     """
     Base class for a wizard step implementing the IStep interface.
-    
+
     Subclasses will typically want to override at least the fields attribute.
     """
     implements(IStep)
-    
+
     index = viewpagetemplatefile.ViewPageTemplateFile('wizard-step.pt')
     subforms = ()
     label = u""
@@ -78,7 +78,7 @@ class Step(utils.OverridableTemplate, form.Form):
     def __init__(self, context, request, wizard):
         super(Step, self).__init__(context, request)
         self.wizard = wizard
-    
+
     def getContent(self):
         return self.request.SESSION[self.wizard.sessionKey].setdefault(self.prefix, {})
 
@@ -86,10 +86,10 @@ class Step(utils.OverridableTemplate, form.Form):
         content = self.getContent()
         applyChanges(self, content, data)
         self.wizard.sync()
-    
+
     def load(self, context, **kw):
         pass
-    
+
     def apply(self, context, **kw):
         pass
 
@@ -103,17 +103,17 @@ class GroupStep(group.GroupForm, Step):
             groupChanged = applyChanges(group, groupContent, data)
             for interface, names in groupChanged.items():
                 changed[interface] = changed.get(interface, []) + names
-                
+
         return changed
 
 
 class Wizard(utils.OverridableTemplate, form.Form):
     """
     Abstract class for a wizard implementing the IWizard interface.
-    
+
     Subclasses must provide at least the finish method.
     """
-    
+
     implements(IWizard)
 
     successMessage = _(u"Information submitted successfully.")
@@ -121,7 +121,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
     clearMessage = _(u"Form cleared.")
 
     index = viewpagetemplatefile.ViewPageTemplateFile('wizard.pt')
-    
+
     steps = () # Set this to be form classes
     label = u""
     description = u""
@@ -198,9 +198,12 @@ class Wizard(utils.OverridableTemplate, form.Form):
     def onLastStep(self):
         return self.currentIndex == len(self.steps) - 1
 
+    def showContinue(self):
+        return not self.onLastStep
+
     @button.buttonAndHandler(_(u'Continue'),
                              name='continue',
-                             condition=lambda form:not form.onLastStep)
+                             condition=lambda form: form.showContinue())
     def handleContinue(self, action):
         messages = IStatusMessage(self.request)
         data, errors = self.currentStep.extractData()
@@ -223,9 +226,12 @@ class Wizard(utils.OverridableTemplate, form.Form):
                 return False
         return True
 
+    def showFinish(self):
+        return self.allStepsFinished or self.onLastStep
+
     @button.buttonAndHandler(_(u'Finish'),
                              name='finish',
-                             condition=lambda form:form.allStepsFinished or form.onLastStep)
+                             condition=lambda form:form.showFinish())
     def handleFinish(self, action):
         messages = IStatusMessage(self.request)
         data, errors = self.currentStep.extractData()
@@ -247,9 +253,12 @@ class Wizard(utils.OverridableTemplate, form.Form):
     def onFirstStep(self):
         return self.currentIndex == 0
 
+    def showBack(self):
+        return not self.onFirstStep
+
     @button.buttonAndHandler(_(u'Back'),
                              name='back',
-                             condition=lambda form:not form.onFirstStep)
+                             condition=lambda form:form.showBack())
     def handleBack(self, action):
         messages = IStatusMessage(self.request)
         
@@ -279,7 +288,9 @@ class Wizard(utils.OverridableTemplate, form.Form):
                 return True
         return False
 
-    @button.buttonAndHandler(_(u'Clear'), name='clear', condition=showClear)
+    @button.buttonAndHandler(_(u'Clear'),
+                             name='clear',
+                             condition=lambda form:form.showClear())
     def handleClear(self, action):
         self.session.clear()
         self.sync()
@@ -308,10 +319,10 @@ class Wizard(utils.OverridableTemplate, form.Form):
         for step in self.activeSteps:
             if hasattr(step, 'load'):
                 step.load(context)
-    
+
     def finish(self):
         self.applySteps(self.context)
-    
+
     def applySteps(self, context):
         for step in self.activeSteps:
             if hasattr(step, 'apply'):
