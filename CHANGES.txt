@@ -4,6 +4,10 @@ Changelog
 1.4.8 (Unreleased)
 ------------------
 
+* Fix step data initial load in case of dynamic wizards (ie when steps are
+  depending on user data)
+  [gotcha, schminitz]
+
 * Enabling overriding button conditions in descendant classes
   [gotcha]
 

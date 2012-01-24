@@ -93,6 +93,15 @@ class Step(utils.OverridableTemplate, form.Form):
     def apply(self, context, **kw):
         pass
 
+    def update(self):
+        session = self.wizard.session
+        data = session.get(self.prefix, None)
+        if data is None:
+            self.load(self.wizard.context)
+            self.wizard.sync()
+        super(Step, self).update()
+
+
 class GroupStep(group.GroupForm, Step):
     def applyChanges(self, data):
         """ Override to make sure we use the wizard's session storage for group fields """
@@ -161,12 +170,6 @@ class Wizard(utils.OverridableTemplate, form.Form):
         for step in self.steps:
             step = step(self.context, self.request, self)
             self.activeSteps.append(step)
-
-        # if this wizard hasn't been loaded yet in this session,
-        # load the data
-        if not len(self.session):
-            self.initialize()
-            self.sync()
 
         self.updateCurrentStep(self.session.setdefault('step', 0))
         if 'step' in self.request.form:
@@ -261,7 +264,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
                              condition=lambda form:form.showBack())
     def handleBack(self, action):
         messages = IStatusMessage(self.request)
-        
+
         if self.validate_back:
             # if true, only allow navigating back if the current
             # step validates
@@ -311,14 +314,6 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
         self.updateCurrentStep(step_idx)
         self.updateActions()
-
-    def initialize(self):
-        self.loadSteps(self.context)
-
-    def loadSteps(self, context):
-        for step in self.activeSteps:
-            if hasattr(step, 'load'):
-                step.load(context)
 
     def finish(self):
         self.applySteps(self.context)

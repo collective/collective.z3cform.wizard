@@ -95,10 +95,6 @@ Let's render the form for the first time now:
                name="form.buttons.continue"
                class="submit-widget button-field" value="Continue"
                type="submit" />
-        <input id="form-buttons-clear"
-               name="form.buttons.clear"
-               class="submit-widget button-field" value="Clear"
-               type="submit" />
     </div>
     </form>
   </div>
