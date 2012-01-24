@@ -4,6 +4,9 @@ Changelog
 1.4.8 (Unreleased)
 ------------------
 
+* Fix clear action in case of dynamic wizards
+  [gotcha, schminitz]
+
 * Fix step data initial load in case of dynamic wizards (ie when steps are
   depending on user data)
   [gotcha, schminitz]

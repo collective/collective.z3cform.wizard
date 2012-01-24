@@ -165,19 +165,23 @@ class Wizard(utils.OverridableTemplate, form.Form):
                 self.request.SESSION[sessionKey] = {}
         self.session = self.request.SESSION[sessionKey]
 
-        # initialize steps
+        self.updateActiveSteps()
+        self.jumpToCurrentStep()
+
+        self.updateActions()
+        self.actions.execute()
+        self.updateWidgets()
+
+    def updateActiveSteps(self):
         self.activeSteps = []
         for step in self.steps:
             step = step(self.context, self.request, self)
             self.activeSteps.append(step)
 
+    def jumpToCurrentStep(self):
         self.updateCurrentStep(self.session.setdefault('step', 0))
         if 'step' in self.request.form:
             self.jump(self.request.form['step'])
-
-        self.updateActions()
-        self.actions.execute()
-        self.updateWidgets()
 
     def updateActions(self):
         """
@@ -298,6 +302,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
         self.session.clear()
         self.sync()
         self.status = self.clearMessage
+        self.updateActiveSteps()
         self.updateCurrentStep(0)
         self.updateActions()
         self.currentStep.ignoreRequest = True
