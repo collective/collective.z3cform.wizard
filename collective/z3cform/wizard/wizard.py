@@ -35,6 +35,7 @@ from collective.z3cform.wizard.i18n import MessageFactory as _
 
 WIZARD_SESSION_KEY = 'collective.z3cform.wizard'
 
+
 # slight modification of the normal applyChanges method from z3c.form.form,
 # to make it not break if there's no value set yet
 def applyChanges(form, content, data):
@@ -53,6 +54,7 @@ def applyChanges(form, content, data):
             # Record the change using information required later
             changes.setdefault(dm.field.interface, []).append(name)
     return changes
+
 
 class Step(utils.OverridableTemplate, form.Form):
     """
@@ -80,7 +82,8 @@ class Step(utils.OverridableTemplate, form.Form):
         self.wizard = wizard
 
     def getContent(self):
-        return self.request.SESSION[self.wizard.sessionKey].setdefault(self.prefix, {})
+        return self.request.SESSION[self.wizard.sessionKey].setdefault(
+                self.prefix, {})
 
     def applyChanges(self, data):
         content = self.getContent()
@@ -104,7 +107,9 @@ class Step(utils.OverridableTemplate, form.Form):
 
 class GroupStep(group.GroupForm, Step):
     def applyChanges(self, data):
-        """ Override to make sure we use the wizard's session storage for group fields """
+        """ Override to make sure we use the wizard's session storage
+        for group fields.
+        """
         content = self.getContent()
         changed = applyChanges(self, content, data)
         for group in self.groups:
@@ -131,7 +136,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     index = viewpagetemplatefile.ViewPageTemplateFile('wizard.pt')
 
-    steps = () # Set this to be form classes
+    steps = ()  # Set this to be form classes
     label = u""
     description = u""
     ignoreContext = True
@@ -154,13 +159,15 @@ class Wizard(utils.OverridableTemplate, form.Form):
     def update(self):
         # initialize session
         sessionKey = self.sessionKey
+        # PEP8 complaints but TransientObject does not implement __contains__
         if not self.request.SESSION.has_key(sessionKey):
             self.request.SESSION[sessionKey] = {}
-        # Reset session if we came from a URL different from that of the wizard,
+        # Reset session if we came from a URL different from that of the wizard
         # unless it's the URL that's used during z3cform inline validation.
         referer = self.request.get('HTTP_REFERER', '')
         url = self.request.get('ACTUAL_URL', '')
-        if referer.startswith('http') and 'kss_z3cform_inline_validation' not in url:
+        if referer.startswith('http') and (
+                'kss_z3cform_inline_validation' not in url):
             if not utils.location_is_equal(url, referer):
                 self.request.SESSION[sessionKey] = {}
         self.session = self.request.SESSION[sessionKey]
@@ -192,7 +199,8 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     def updateActions(self):
         """
-        Allow the current step to determine whether the wizard navigation is enabled.
+        Allow the current step to determine whether the wizard navigation
+        is enabled.
         """
         form.Form.updateActions(self)
         if not self.currentStep.completed:
@@ -245,7 +253,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     @button.buttonAndHandler(_(u'Finish'),
                              name='finish',
-                             condition=lambda form:form.showFinish())
+                             condition=lambda form: form.showFinish())
     def handleFinish(self, action):
         messages = IStatusMessage(self.request)
         data, errors = self.currentStep.extractData()
@@ -272,7 +280,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     @button.buttonAndHandler(_(u'Back'),
                              name='back',
-                             condition=lambda form:form.showBack())
+                             condition=lambda form: form.showBack())
     def handleBack(self, action):
         messages = IStatusMessage(self.request)
 
@@ -304,7 +312,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     @button.buttonAndHandler(_(u'Clear'),
                              name='clear',
-                             condition=lambda form:form.showClear())
+                             condition=lambda form: form.showClear())
     def handleClear(self, action):
         self.session.clear()
         self.sync()
