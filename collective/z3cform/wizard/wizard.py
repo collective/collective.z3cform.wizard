@@ -166,6 +166,13 @@ class Wizard(utils.OverridableTemplate, form.Form):
         self.session = self.request.SESSION[sessionKey]
 
         self.updateActiveSteps()
+
+        # if this wizard hasn't been loaded yet in this session,
+        # load the data
+        if not len(self.session):
+            self.initialize()
+            self.sync()
+
         self.jumpToCurrentStep()
 
         self.updateActions()
@@ -319,6 +326,14 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
         self.updateCurrentStep(step_idx)
         self.updateActions()
+
+    def initialize(self):
+        self.loadSteps(self.context)
+
+    def loadSteps(self, context):
+        for step in self.activeSteps:
+            if hasattr(step, 'load'):
+                step.load(context)
 
     def finish(self):
         self.applySteps(self.context)
