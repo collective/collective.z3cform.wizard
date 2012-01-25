@@ -1,0 +1,480 @@
+Dynamic wizard support
+======================
+
+In some cases, depending on the user's answers to earlier steps of a wizard, 
+later steps are shown or not to the user 
+
+  >>> from zope import schema
+  >>> from z3c.form import field, form
+  >>> from collective.z3cform.wizard import wizard
+  >>> from plone.z3cform.fieldsets import group
+  >>> from Products.statusmessages.interfaces import IStatusMessage
+  >>> from Products.statusmessages.adapter import _decodeCookieValue
+
+We define fields.
+
+  >>> choiceField = schema.Choice(
+  ...   __name__ = 'choice',
+  ...   title=u'Choice',
+  ...   values=(u'first', u'second'),
+  ...   default=u'first'
+  ...   )
+
+  >>> firstField = schema.TextLine(
+  ...   __name__ = 'first',
+  ...   title=u'First',
+  ...   required=False,
+  ...   missing_value=u'',
+  ...   )
+  
+  >>> secondField = schema.Bool(
+  ...   __name__ = 'second',
+  ...   title=u'Second',
+  ...   required=False,
+  ...   )
+
+And wizard steps.
+
+  >>> class FirstStep(wizard.Step):
+  ...     label = u'First'
+  ...     prefix = 'one'
+  ...     fields = field.Fields(firstField)
+  ...
+  ...     def load(self, context):
+  ...         data = self.getContent()
+  ...         data.setdefault('first', u'initial first')
+
+  >>> class SecondStep(wizard.Step):
+  ...     label = u'Second'
+  ...     prefix = 'two'
+  ...     fields = field.Fields(secondField)
+  ...         
+  ...     def load(self, context):
+  ...         data = self.getContent()
+  ...         data['second'] = True
+
+  >>> class ChoiceStep(wizard.Step):
+  ...     label = u'Choice'
+  ...     prefix = 'choice'
+  ...     fields = field.Fields(choiceField)
+
+  >>> class SecondChoiceStep(wizard.Step):
+  ...     label = u'Second Choice'
+  ...     prefix = 'second_choice'
+  ...     fields = field.Fields(choiceField)
+
+We can now define our dynamic wizard. The wizard later steps depend on values
+submitted in the initial ``ChoiceStep`` and ``SecondChoiceStep``.
+
+``steps`` is a computed property instead of a hardcoded sequence.
+
+The class also implements ``showFinish`` method that controls showing (or not) 
+the Finish button.  
+
+  >>> class DynamicWizard(wizard.Wizard):
+  ...     label = u"My dynamic wizard"
+  ...
+  ...     @property
+  ...     def choice(self):
+  ...         choice_data = self.session.get('choice', {})
+  ...         choice = choice_data.get('choice', None)
+  ...         if 'choice.widgets.choice' in self.request.form:
+  ...             choice = unicode(self.request.form['choice.widgets.choice'][0])
+  ...         return choice
+  ... 
+  ...     @property
+  ...     def second_choice(self):
+  ...         choice_data = self.session.get('second_choice', {})
+  ...         choice = choice_data.get('choice', None)
+  ...         if 'second_choice.widgets.choice' in self.request.form:
+  ...             choice = unicode(self.request.form['second_choice.widgets.choice'][0])
+  ...         return choice
+  ...
+  ...     @property
+  ...     def steps(self):
+  ...         if self.choice == u'second':
+  ...             if not self.second_choice:
+  ...                 return [ChoiceStep, SecondChoiceStep, FirstStep]
+  ...             elif self.second_choice == u'second':
+  ...                 return [ChoiceStep, SecondChoiceStep, SecondStep]
+  ...             else:
+  ...                 return [ChoiceStep, SecondChoiceStep, FirstStep]
+  ...         else:
+  ...             return [ChoiceStep, FirstStep]
+  ...
+  ...     def showFinish(self):
+  ...         return (self.choice == u'first' or self.second_choice) and self.allStepsFinished 
+  
+Render the form
+---------------
+
+Let's render the form for the first time now:
+
+  >>> request = TestRequest()
+  >>> wizard = DynamicWizard(None, request)
+  >>> wizard.update()
+  >>> wizard.currentIndex
+  0
+  >>> print wizard.render()
+  <ul class="wizard-steps">
+      <li class="wizard-step-link selected">
+              1. Choice
+      </li>
+      <li class="wizard-step-link">
+          <a href=".?step:int=1">
+              2. First
+          </a>
+      </li>
+  </ul>
+  <div class="form" id="wizard-step-choice">
+    <form action="http://127.0.0.1" method="post"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
+          id="choice" enctype="multipart/form-data">
+        <h2>Choice</h2>
+        <p class="discreet"></p>
+        <div class="field">
+          <label for="choice-widgets-choice">
+            <span>Choice</span>
+          </label>...
+          <span class="fieldRequired"
+                title="Required">
+            (Required)
+          </span>
+          <div class="widget">
+            <select id="choice-widgets-choice"
+              name="choice.widgets.choice:list"
+              class="select-widget required choice-field" size="1">
+              <option id="choice-widgets-choice-0" value="first"
+                      selected="selected">first</option>
+              <option id="choice-widgets-choice-1" value="second">second</option>
+            </select>
+            <input name="choice.widgets.choice-empty-marker"
+                   type="hidden" value="1" />
+          </div>
+        </div>
+    <div class="formControls wizard-buttons">
+        <input id="form-buttons-continue"
+               name="form.buttons.continue"
+               class="submit-widget button-field" value="Continue"
+               type="submit" />
+        <input id="form-buttons-clear"
+               name="form.buttons.clear"
+               class="submit-widget button-field" value="Clear"
+               type="submit" />
+    </div>
+    </form>
+  </div>
+
+Submit the first choice successfully
+------------------------------------
+
+  >>> request.form = {
+  ...     'form.buttons.continue': u'Continue',
+  ...     'choice.widgets.choice': [u'first']
+  ... }
+  >>> wizard = DynamicWizard(None, request)
+  >>> wizard.update()
+  >>> wizard.currentIndex
+  1
+  >>> print wizard.render()
+  <ul class="wizard-steps">
+      <li class="wizard-step-link">
+          <a href=".?step:int=0">
+              1. Choice
+          </a>
+      </li>
+      <li class="wizard-step-link selected">
+              2. First
+      </li>
+  </ul>
+  <div class="form" id="wizard-step-one">
+    <form action="http://127.0.0.1" method="post"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
+          id="one" enctype="multipart/form-data">
+        <h2>First</h2>
+        <p class="discreet"></p>
+                        <div class="field">
+                          <label for="one-widgets-first">
+                            <span>First</span>
+                          </label>
+                          <div class="widget">
+      <input id="one-widgets-first" name="one.widgets.first"
+             class="text-widget textline-field"
+             value="initial first" type="text" />
+                          </div>
+                        </div>
+      <div class="formControls wizard-buttons">
+  <input id="form-buttons-finish" name="form.buttons.finish"
+         class="submit-widget button-field" value="Finish"
+         type="submit" />
+  <input id="form-buttons-back" name="form.buttons.back"
+         class="submit-widget button-field" value="Back"
+         type="submit" />
+  <input id="form-buttons-clear" name="form.buttons.clear"
+         class="submit-widget button-field" value="Clear"
+         type="submit" />
+      </div>
+    </form>
+  </div>
+
+Going backwards
+---------------
+
+  >>> del request.form['form.buttons.continue']
+  >>> request.form['form.buttons.back'] = u'Back'
+  >>> wizard = DynamicWizard(None, request)
+  >>> wizard.update()
+  >>> wizard.currentIndex
+  0
+  >>> print wizard.render()
+  <ul class="wizard-steps">
+      <li class="wizard-step-link selected">
+              1. Choice
+      </li>
+      <li class="wizard-step-link">
+          <a href=".?step:int=1">
+              2. First
+          </a>
+      </li>
+  </ul>
+  <div class="form" id="wizard-step-choice">
+    <form action="http://127.0.0.1" method="post"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
+          id="choice" enctype="multipart/form-data">
+        <h2>Choice</h2>
+        <p class="discreet"></p>
+                        <div class="field">
+                          <label for="choice-widgets-choice">
+                            <span>Choice</span>
+                          </label>
+                          <span class="fieldRequired"
+      title="Required">
+                            (Required)
+                          </span>
+                          <div class="widget">
+  <select id="choice-widgets-choice"
+          name="choice.widgets.choice:list"
+          class="select-widget required choice-field" size="1">
+  <option id="choice-widgets-choice-0" value="first"
+          selected="selected">first</option>
+  <option id="choice-widgets-choice-1" value="second">second</option>
+  </select>
+  <input name="choice.widgets.choice-empty-marker"
+         type="hidden" value="1" />
+                          </div>
+                        </div>
+      <div class="formControls wizard-buttons">
+  <input id="form-buttons-continue"
+         name="form.buttons.continue"
+         class="submit-widget button-field" value="Continue"
+         type="submit" />
+  <input id="form-buttons-finish" name="form.buttons.finish"
+         class="submit-widget button-field" value="Finish"
+         type="submit" />
+  <input id="form-buttons-clear" name="form.buttons.clear"
+         class="submit-widget button-field" value="Clear"
+         type="submit" />
+      </div>
+    </form>
+  </div>
+
+Choose the other branch of the wizard
+-------------------------------------
+
+  >>> request.form = {
+  ...     'form.buttons.continue': u'Continue',
+  ...     'choice.widgets.choice': [u'second']
+  ... }
+  >>> wizard = DynamicWizard(None, request)
+  >>> wizard.update()
+  >>> wizard.currentIndex
+  1
+  >>> print wizard.render()
+  <ul class="wizard-steps">
+      <li class="wizard-step-link">
+          <a href=".?step:int=0">
+              1. Choice
+          </a>
+      </li>
+      <li class="wizard-step-link selected">
+              2. Second Choice
+      </li>
+      <li class="wizard-step-link">
+          <a href=".?step:int=2">
+              3. First
+          </a>
+      </li>
+  </ul>
+  <div class="form" id="wizard-step-second_choice">
+    <form action="http://127.0.0.1" method="post"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
+          id="second_choice" enctype="multipart/form-data">
+        <h2>Second Choice</h2>
+        <p class="discreet"></p>
+                        <div class="field">
+                          <label
+      for="second_choice-widgets-choice">
+                            <span>Choice</span>
+                          </label>
+                          <span class="fieldRequired"
+      title="Required">
+                            (Required)
+                          </span>
+                          <div class="widget">
+  <select id="second_choice-widgets-choice"
+          name="second_choice.widgets.choice:list"
+          class="select-widget required choice-field" size="1">
+  <option id="second_choice-widgets-choice-0" value="first"
+          selected="selected">first</option>
+  <option id="second_choice-widgets-choice-1" value="second">second</option>
+  </select>
+  <input name="second_choice.widgets.choice-empty-marker"
+         type="hidden" value="1" />
+                          </div>
+                        </div>
+      <div class="formControls wizard-buttons">
+  <input id="form-buttons-continue"
+         name="form.buttons.continue"
+         class="submit-widget button-field" value="Continue"
+         type="submit" />
+  <input id="form-buttons-back" name="form.buttons.back"
+         class="submit-widget button-field" value="Back"
+         type="submit" />
+  <input id="form-buttons-clear" name="form.buttons.clear"
+         class="submit-widget button-field" value="Clear"
+         type="submit" />
+      </div>
+    </form>
+  </div>
+
+Choose again 
+------------
+
+  >>> request.form = {
+  ...     'form.buttons.continue': u'Continue',
+  ...     'second_choice.widgets.choice': [u'second']
+  ... }
+  >>> wizard = DynamicWizard(None, request)
+  >>> wizard.update()
+  >>> wizard.currentIndex
+  2
+
+The initial value is actually shown.
+
+  >>> print wizard.render()
+  <ul class="wizard-steps">
+      <li class="wizard-step-link">
+          <a href=".?step:int=0">
+              1. Choice
+          </a>
+      </li>
+      <li class="wizard-step-link">
+          <a href=".?step:int=1">
+              2. Second Choice
+          </a>
+      </li>
+      <li class="wizard-step-link selected">
+              3. Second
+      </li>
+  </ul>
+  <div class="form" id="wizard-step-two">
+    <form action="http://127.0.0.1" method="post"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
+          id="two" enctype="multipart/form-data">
+        <h2>Second</h2>
+        <p class="discreet"></p>
+                        <div class="field">
+                          <label for="two-widgets-second">
+                            <span>Second</span>
+                          </label>
+                          <div class="widget">
+  <span class="option">
+    <label for="two-widgets-second-0">
+      <input id="two-widgets-second-0"
+             name="two.widgets.second:list"
+             class="radio-widget bool-field" value="true"
+             checked="checked" type="radio" />
+      <span class="label">yes</span>
+    </label>
+  </span>
+  <span class="option">
+    <label for="two-widgets-second-1">
+      <input id="two-widgets-second-1"
+             name="two.widgets.second:list"
+             class="radio-widget bool-field" value="false"
+             type="radio" />
+      <span class="label">no</span>
+    </label>
+  </span>
+  <input name="two.widgets.second-empty-marker" type="hidden"
+         value="1" />
+                          </div>
+                        </div>
+      <div class="formControls wizard-buttons">
+  <input id="form-buttons-finish" name="form.buttons.finish"
+         class="submit-widget button-field" value="Finish"
+         type="submit" />
+  <input id="form-buttons-back" name="form.buttons.back"
+         class="submit-widget button-field" value="Back"
+         type="submit" />
+  <input id="form-buttons-clear" name="form.buttons.clear"
+         class="submit-widget button-field" value="Clear"
+         type="submit" />
+      </div>
+    </form>
+  </div>
+
+Clear wizard 
+------------
+
+  >>> request.form = {
+  ...     'form.buttons.clear': u'Clear',
+  ...     'second_choice.widgets.choice': [u'second']
+  ... }
+  >>> wizard = DynamicWizard(None, request)
+  >>> wizard.update()
+  >>> wizard.currentIndex
+  0
+  >>> print wizard.render()
+  <ul class="wizard-steps">
+      <li class="wizard-step-link selected">
+              1. Choice
+      </li>
+      <li class="wizard-step-link">
+              2. First
+      </li>
+  </ul>
+  <div class="form" id="wizard-step-choice">
+    <form action="http://127.0.0.1" method="post"
+          class="rowlike enableUnloadProtection kssattr-formname-127.0.0.1"
+          id="choice" enctype="multipart/form-data">
+        <h2>Choice</h2>
+        <p class="discreet"></p>
+                        <div class="field">
+                          <label for="choice-widgets-choice">
+                            <span>Choice</span>
+                          </label>
+                          <span class="fieldRequired"
+      title="Required">
+                            (Required)
+                          </span>
+                          <div class="widget">
+  <select id="choice-widgets-choice"
+          name="choice.widgets.choice:list"
+          class="select-widget required choice-field" size="1">
+  <option id="choice-widgets-choice-0" value="first"
+          selected="selected">first</option>
+  <option id="choice-widgets-choice-1" value="second">second</option>
+  </select>
+  <input name="choice.widgets.choice-empty-marker"
+         type="hidden" value="1" />
+                          </div>
+                        </div>
+      <div class="formControls wizard-buttons">
+  <input id="form-buttons-continue"
+         name="form.buttons.continue"
+         class="submit-widget button-field" value="Continue"
+         type="submit" />
+      </div>
+    </form>
+  </div>

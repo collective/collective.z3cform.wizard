@@ -3,13 +3,19 @@ import os
 
 version = '1.4.7'
 
+DOCTESTS_PATH = os.path.join('collective', 'z3cform', 'wizard')
+
 setup(name='collective.z3cform.wizard',
       version=version,
-      description="This is a library for creating multi-page wizards using z3c.form.  Values are stored in a session until the wizard is finished.",
+      description="This is a library for creating multi-page wizards using "
+          "z3c.form. Values are stored in a session until the wizard is "
+          "finished.",
       long_description=open('README.txt').read() + "\n" +
                        open('CHANGES.txt').read() + "\n" +
-                       open(os.path.join('collective', 'z3cform', 'wizard', 'wizard.txt')).read(),
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+                       open(os.path.join(DOCTESTS_PATH, 'wizard.txt')).read()
+                       + "\n" +
+                       open(os.path.join(DOCTESTS_PATH, 'dynamic_wizard.txt')
+                           ).read(),
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Framework :: Zope2',
@@ -18,7 +24,8 @@ setup(name='collective.z3cform.wizard',
       keywords='z3c.form wizard session',
       author='David Glick',
       author_email='davidglick@groundwire.org',
-      url='http://svn.plone.org/svn/collective/collective.z3cform.wizard/trunk',
+      url=(
+        'http://svn.plone.org/svn/collective/collective.z3cform.wizard/trunk'),
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective', 'collective.z3cform'],
@@ -31,9 +38,9 @@ setup(name='collective.z3cform.wizard',
           'Zope2',
           # -*- Extra requirements: -*-
       ],
-      extras_require = dict(
-          test = ['plone.autoform', 'z3c.form[test]'],
-          autowizard = ['plone.autoform'],
+      extras_require=dict(
+          test=['plone.autoform', 'z3c.form[test]'],
+          autowizard=['plone.autoform'],
           ),
       entry_points="""
       # -*- Entry points: -*-
