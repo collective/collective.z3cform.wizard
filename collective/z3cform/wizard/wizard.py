@@ -356,4 +356,4 @@ class Wizard(utils.OverridableTemplate, form.Form):
 
     @property
     def absolute_url(self):
-        return self.context.absolute_url() + '/' + self.__name__
+        return self.context.absolute_url() + '/' + (self.__name__ or '') 
