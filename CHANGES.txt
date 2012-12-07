@@ -4,6 +4,9 @@ Changelog
 1.4.8 (Unreleased)
 ------------------
 
+* Fixed generation of the wizard step links at the top of every wizard
+  [romanofski]
+
 * Clear action now updates active steps (needed to cover dynamic wizards)
   [gotcha, schminitz]
 
