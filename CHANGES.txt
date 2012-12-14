@@ -19,6 +19,9 @@ Changelog
   absolute_url will inaccurate in that circumstance. TODO
   [spanky]
 
+* Add French translation.
+  [mpeeters]
+
 1.4.7 (2012-01-05)
 ------------------
 
