@@ -4,6 +4,9 @@ Changelog
 1.4.8 (Unreleased)
 ------------------
 
+* Add Chinese translation.
+  [jianaijun]
+
 * Clear action now updates active steps (needed to cover dynamic wizards)
   [gotcha, schminitz]
 
