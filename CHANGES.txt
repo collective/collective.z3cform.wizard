@@ -4,6 +4,9 @@ Changelog
 1.4.8 (Unreleased)
 ------------------
 
+* Fix pagetemplate import for Plone 4.3 compatibility.
+  [jone]
+
 * Add Chinese translation.
   [jianaijun]
 
