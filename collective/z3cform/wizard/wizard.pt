@@ -28,10 +28,10 @@
 
   <form action="." method="post"
         tal:define="form nocall:view/currentStep"
-        tal:attributes="action request/getURL;
+        tal:attributes="action view/absolute_url;
                         enctype form/enctype;
                         id form/id;
-                        class python:'rowlike enableUnloadProtection kssattr-formname-%s' % request.getURL().split('/')[-1]">
+                        class python:'rowlike enableUnloadProtection kssattr-formname-%s' % view.absolute_url.split('/')[-1]">
     <tal:form define="form nocall:view/currentStep">
       <h2 tal:condition="form/label" tal:content="form/label">
         Subform title
