@@ -391,7 +391,7 @@ The initial value is actually shown.
   <span class="option">
     <label for="two-widgets-second-0">
       <input id="two-widgets-second-0"
-             name="two.widgets.second:list"
+             name="two.widgets.second"
              class="radio-widget bool-field" value="true"
              checked="checked" type="radio" />
       <span class="label">yes</span>
@@ -400,7 +400,7 @@ The initial value is actually shown.
   <span class="option">
     <label for="two-widgets-second-1">
       <input id="two-widgets-second-1"
-             name="two.widgets.second:list"
+             name="two.widgets.second"
              class="radio-widget bool-field" value="false"
              type="radio" />
       <span class="label">no</span>

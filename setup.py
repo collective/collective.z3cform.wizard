@@ -39,7 +39,7 @@ setup(name='collective.z3cform.wizard',
           # -*- Extra requirements: -*-
       ],
       extras_require=dict(
-          test=['plone.autoform', 'z3c.form[test]'],
+          test=['plone.autoform', 'plone.z3cform[test]', 'z3c.form[test]'],
           autowizard=['plone.autoform'],
           ),
       entry_points="""
