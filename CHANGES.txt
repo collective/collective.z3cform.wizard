@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.8 (Unreleased)
+1.4.8 (2013-04-18)
 ------------------
 
 * Fix pagetemplate import for Plone 4.3 compatibility.
