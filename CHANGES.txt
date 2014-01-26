@@ -4,6 +4,8 @@ Changelog
 1.4.9 (unreleased)
 ------------------
 
+* Fix issue where groups iteration in wizard step failed with Chameleon,
+  because of None passed as iteratable value in tal:repeat.
 
 1.4.8 (2013-04-18)
 ------------------

@@ -9,7 +9,7 @@
     <metal:field use-macro="context/@@ploneform-macros/field" />
 </tal:widgets>
 
-<tal:groups define="groups nocall:view/groups|nothing" repeat="group groups">
+<tal:groups define="groups nocall:view/groups|nothing" condition="groups" repeat="group groups">
 	<fieldset class="group" tal:condition="group/widgets" tal:attributes="id string:fieldset-${group/prefix}">
 		<legend tal:content="group/label" />
 		<tal:widgets repeat="widget group/widgets/values">
