@@ -4,6 +4,8 @@ Changelog
 1.4.9 (unreleased)
 ------------------
 
+* Add italian translation
+  [valentinaB]
 
 1.4.8 (2013-04-18)
 ------------------
@@ -24,8 +26,8 @@ Changelog
 * Enabling overriding button conditions in descendant classes
   [gotcha]
 
-* In wizard.Wizard, the absolute_url property will throw a TypeError if 
-  self.__name__ is None. Not any more! The problem now is this means that 
+* In wizard.Wizard, the absolute_url property will throw a TypeError if
+  self.__name__ is None. Not any more! The problem now is this means that
   absolute_url will inaccurate in that circumstance. TODO
   [spanky]
 
