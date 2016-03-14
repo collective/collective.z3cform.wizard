@@ -4,6 +4,9 @@ Changelog
 1.4.9 (unreleased)
 ------------------
 
+* Add dutch translation
+  [mpeeters]
+
 * Add italian translation
   [valentinaB]
 
