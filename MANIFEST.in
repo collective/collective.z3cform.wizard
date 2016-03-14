@@ -1,0 +1,12 @@
+include *.py
+include *.txt
+include .travis.yml
+include buildout.cfg
+recursive-include collective *.css
+recursive-include collective *.po
+recursive-include collective *.pot
+recursive-include collective *.pt
+recursive-include collective *.txt
+recursive-include collective *.zcml
+recursive-include docs *.GPL
+recursive-include docs *.txt
