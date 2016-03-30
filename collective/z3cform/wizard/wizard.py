@@ -78,9 +78,11 @@ class Step(utils.OverridableTemplate, form.Form):
     wizard = None
     completed = True
 
+    sessionmanager = None
+
     @property
     def available(self):
-        if self.prefix in self.request.SESSION[self.wizard.sessionKey]:
+        if self.prefix in self.sessionmanager[self.wizard.sessionKey]:
             return True
         return False
 
@@ -88,8 +90,12 @@ class Step(utils.OverridableTemplate, form.Form):
         super(Step, self).__init__(context, request)
         self.wizard = wizard
 
+        # use default session manager if nothing is set
+        if not self.sessionmanager:
+            self.sessionmanager = request.SESSION
+
     def getContent(self):
-        return self.request.SESSION[self.wizard.sessionKey].setdefault(
+        return self.sessionmanager[self.wizard.sessionKey].setdefault(
                 self.prefix, {})
 
     def applyChanges(self, data):
@@ -154,6 +160,8 @@ class Wizard(utils.OverridableTemplate, form.Form):
     finished = False
     validate_back = True
 
+    sessionmanager = None
+
     @property
     def sessionKey(self):
         try:
@@ -164,11 +172,16 @@ class Wizard(utils.OverridableTemplate, form.Form):
         return (WIZARD_SESSION_KEY, tuple(path))
 
     def update(self):
+        # use default session management if nothing else is provided
+        if not self.sessionmanager:
+            self.sessionmanager = self.request.SESSION
+
         # initialize session
         sessionKey = self.sessionKey
+
         # PEP8 complaints but TransientObject does not implement __contains__
-        if not self.request.SESSION.has_key(sessionKey):
-            self.request.SESSION[sessionKey] = {}
+        if not self.sessionmanager.has_key(sessionKey):
+            self.sessionmanager[sessionKey] = {}
         # Reset session if we came from a URL different from that of the wizard
         # unless it's the URL that's used during z3cform inline validation.
         referer = self.request.get('HTTP_REFERER', '')
@@ -176,8 +189,8 @@ class Wizard(utils.OverridableTemplate, form.Form):
         if referer.startswith('http') and (
                 'kss_z3cform_inline_validation' not in url):
             if not utils.location_is_equal(url, referer):
-                self.request.SESSION[sessionKey] = {}
-        self.session = self.request.SESSION[sessionKey]
+                self.sessionmanager[sessionKey] = {}
+        self.session = self.sessionmanager[sessionKey]
 
         self.updateActiveSteps()
 
@@ -275,7 +288,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
         self.currentStep.applyChanges(data)
         self.finish()
         # clear out the session
-        self.request.SESSION[self.sessionKey] = {}
+        self.sessionmanager[self.sessionKey] = {}
         self.sync()
 
     @property
@@ -359,7 +372,7 @@ class Wizard(utils.OverridableTemplate, form.Form):
                 step.apply(context)
 
     def sync(self):
-        self.request.SESSION._p_changed = True
+        self.sessionmanager._p_changed = True
 
     @property
     def absolute_url(self):
