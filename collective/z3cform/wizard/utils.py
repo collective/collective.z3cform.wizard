@@ -1,5 +1,5 @@
 import re
-from urlparse import urlsplit
+from six.moves.urllib.parse import urlsplit
 
 
 class OverridableTemplate(object):
