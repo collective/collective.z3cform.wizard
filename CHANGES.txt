@@ -4,6 +4,9 @@ Changelog
 1.4.9 (unreleased)
 ------------------
 
+* Add adaptation for python3
+  [vpiret]
+
 * Add dutch translation
   [mpeeters]
 
